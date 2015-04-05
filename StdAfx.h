@@ -37,3 +37,4 @@ ONLINELIST_PING,//PING
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
 
 #endif // !defined(AFX_STDAFX_H__4FB97E45_8F53_447A_84E7_27A885486F26__INCLUDED_)
+#include <afxcontrolbars.h>

@@ -141,6 +141,7 @@
     <ClCompile Include="maizangDlg.cpp" />
     <ClCompile Include="Process.cpp" />
     <ClCompile Include="ScreenDlg.cpp" />
+    <ClCompile Include="SettingDlg.cpp" />
     <ClCompile Include="StdAfx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">stdafx.h</PrecompiledHeaderFile>
@@ -163,6 +164,7 @@
     <ClInclude Include="maizang.h" />
     <ClInclude Include="maizangDlg.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="SettingDlg.h" />
     <ClInclude Include="StdAfx.h" />
     <ClInclude Include="ThreadTemplate.h" />
     <ClInclude Include="TrueColorToolBar.h" />
@@ -184,4 +186,9 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties RESOURCE_FILE="maizang.rc" />
+    </VisualStudio>
+  </ProjectExtensions>
 </Project>
