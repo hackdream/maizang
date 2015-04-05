@@ -2,6 +2,7 @@
 // Microsoft Visual C++ 生成的包含文件。
 // 供 maizang.rc 使用
 //
+#define IDD_SETTING                     2
 #define IDM_ABOUTBOX                    0x0010
 #define IDD_ABOUTBOX                    100
 #define IDS_ABOUTBOX                    101
@@ -25,8 +26,8 @@
 #define IDD_DIALOG2                     146
 #define IDD_CMD_SHELL                   146
 #define IDD_PROCESS                     148
-#define ID_ENDTASK						149
-#define ID_REFRESH						150
+#define ID_ENDTASK                      149
+#define ID_REFRESH                      150
 #define IDC_Message                     1000
 #define IDC_Online                      1001
 #define IDC_STATIC_STATE                1002
@@ -46,9 +47,11 @@
 #define IDC_BControl                    1015
 #define IDC_Ec                          1015
 #define IDC_Execute                     1015
+#define IDC_GenerateServer              1015
 #define IDC_BUTTON3                     1017
 #define IDC_Shell                       1018
 #define IDC_CommandEdit                 1019
+#define IDC_EDIT2                       1020
 #define IDC_LIST_PROCESS                1027
 #define IDM_ONLINE_CMD                  32771
 #define IDM_ONLINE_PROCESS              32773
@@ -99,9 +102,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        148
+#define _APS_NEXT_RESOURCE_VALUE        150
 #define _APS_NEXT_COMMAND_VALUE         32834
-#define _APS_NEXT_CONTROL_VALUE         1020
+#define _APS_NEXT_CONTROL_VALUE         1021
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

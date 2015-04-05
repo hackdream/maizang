@@ -14,6 +14,7 @@
 #include "ScreenDlg.h"
 #include "CmdDlg.h"
 #include "Process.h"
+#include "SettingDlg.h"
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
@@ -128,6 +129,7 @@ ON_COMMAND(IDM_ONLINE_DELETE, OnOnlineDelete)
 ON_COMMAND(IDM_MAIN_CLOSE, OnMainClose)
 ON_COMMAND(IDM_MAIN_ABOUT, OnMainAbout)
 ON_COMMAND(IDM_ONLINE_AUDIO, OnOnlineAudio)
+ON_COMMAND(IDM_MAIN_BUILD, OnCreateServer)
 ON_COMMAND(IDM_ONLINE_CMD, OnOnlineCmd)
 ON_COMMAND(IDM_ONLINE_DESKTOP, OnOnlineDesktop)
 ON_COMMAND(IDM_ONLINE_FLIE, OnOnlineFlie)
@@ -545,6 +547,14 @@ void CMaizangDlg::OnOnlineCmd()
 
 
 
+}
+
+
+//生成服务端
+void CMaizangDlg::OnCreateServer(){
+		CSettingDlg * pSettingDlg = new CSettingDlg;
+		pSettingDlg->Create(IDD_SETTING, GetDesktopWindow());//创建一个非模态对话框
+	    pSettingDlg->ShowWindow(SW_SHOW);
 }
 
 //桌面监控

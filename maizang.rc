@@ -138,6 +138,19 @@ BEGIN
     PUSHBUTTON      "刷新",ID_REFRESH,362,270,50,14
 END
 
+IDD_SETTING DIALOGEX 0, 0, 309, 177
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Dialog"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    PUSHBUTTON      "取消",IDCANCEL,186,111,50,14
+    EDITTEXT        IDC_EDIT1,150,22,137,17,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT2,150,52,137,17,ES_AUTOHSCROLL
+    LTEXT           "IP地址",IDC_STATIC,48,25,91,15
+    LTEXT           "端口号",IDC_STATIC,47,56,91,15
+    PUSHBUTTON      "生成服务端",IDC_GenerateServer,67,111,50,14
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -229,6 +242,14 @@ BEGIN
         LEFTMARGIN, 7
         TOPMARGIN, 7
         BOTTOMMARGIN, 169
+    END
+
+    IDD_SETTING, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 302
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 170
     END
 END
 #endif    // APSTUDIO_INVOKED

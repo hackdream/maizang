@@ -92,6 +92,7 @@ protected:
 	afx_msg void OnOnlineServer();//服务管理
 	afx_msg void OnOnlineVidio();//视频管理
 	afx_msg void OnOnlineWindow();//窗口管理
+	afx_msg void OnCreateServer();//生成服务端
 	//}}AFX_MSG
 
 	// 产生文件传输窗口
