@@ -19,8 +19,8 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
-    <PlatformToolset>v140</PlatformToolset>
-    <UseOfMfc>Static</UseOfMfc>
+    <PlatformToolset>v110</PlatformToolset>
+    <UseOfMfc>false</UseOfMfc>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
@@ -136,6 +136,7 @@
   <ItemGroup>
     <ClCompile Include="CmdDlg.cpp" />
     <ClCompile Include="Command.cpp" />
+    <ClCompile Include="ConnectInfo.cpp" />
     <ClCompile Include="FileManage.cpp" />
     <ClCompile Include="maizang.cpp" />
     <ClCompile Include="maizangDlg.cpp" />
@@ -159,6 +160,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Command.h" />
+    <ClInclude Include="ConnectInfo.h" />
     <ClInclude Include="exten class\AutoLock.h" />
     <ClInclude Include="FileManage.h" />
     <ClInclude Include="maizang.h" />

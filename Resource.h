@@ -52,6 +52,8 @@
 #define IDC_Shell                       1018
 #define IDC_CommandEdit                 1019
 #define IDC_EDIT2                       1020
+#define IDC_Port                        1020
+#define IDC_IP                          1021
 #define IDC_LIST_PROCESS                1027
 #define IDM_ONLINE_CMD                  32771
 #define IDM_ONLINE_PROCESS              32773
@@ -104,7 +106,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        150
 #define _APS_NEXT_COMMAND_VALUE         32834
-#define _APS_NEXT_CONTROL_VALUE         1021
+#define _APS_NEXT_CONTROL_VALUE         1022
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif
