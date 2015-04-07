@@ -58,17 +58,14 @@ typedef struct tagMsgHead
 }MsgHead,*LPMsgHead;
 
 
-//获得电脑的系统信息
-typedef struct tagSysInfo
+typedef struct tagSysInfo//获得电脑的系统信息
 {
-	char cComputer[64];        
-	char cMemorySize[32];
-	char cOs[64];
-	char cVersion[32];
-    char bVideo;
-	int iVipID;
-}SysInfo,*LPSysInfo;//存放服务端发送过来的系统信息
-
+	char computerName[64];        
+	char memorySize[32];
+	char osVersion[64];
+	char cpuInfo[32];
+	char hasCamera[10];
+}SysInfo, *pSysInfo;
 
 //硬盘信息结构体
 typedef struct tagDriver

