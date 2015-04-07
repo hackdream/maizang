@@ -45,7 +45,7 @@ public:
 	void ShowMessage(bool bIsOk,CString strMsg); 
 
 	//添加上线条目
-	void AddOnlineList(SOCKET socket, CString strIP,CString strAddr,CString strPCName,CString strOS,CString strCPU,CString strVideo,CString strPing); 
+	void AddOnlineList(SOCKET socket, CString strIP,CString strAddr,CString strPCName,CString strOS,CString strCPU,CString strVideo,CString strMemSz); 
 
     // standard constructor
 	CMaizangDlg(CWnd* pParent = NULL);	
