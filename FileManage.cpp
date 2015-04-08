@@ -42,7 +42,8 @@ void CFileManage::DoDataExchange(CDataExchange* pDX)
 BEGIN_MESSAGE_MAP(CFileManage, CDialog)
 	//{{AFX_MSG_MAP(CFileManage)
 	//}}AFX_MSG_MAP
-	ON_NOTIFY(LVN_ITEMCHANGED, IDC_FILELIST, &CFileManage::OnLvnItemchangedFilelist)
+	ON_NOTIFY(NM_RDBLCLK, IDC_FILELIST, &CFileManage::OnNMRDblclkFilelist)
+	ON_NOTIFY(NM_DBLCLK, IDC_FILELIST, &CFileManage::OnNMDblclkFilelist)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -228,41 +229,6 @@ void CFileManage::OnWorkEnd()
 	m_hWorkThread = NULL;
 }
 
-
-void CFileManage::OnLvnItemchangedFilelist(NMHDR *pNMHDR, LRESULT *pResult)
-{
-	LPNMLISTVIEW pNMLV = reinterpret_cast<LPNMLISTVIEW>(pNMHDR);
-	// TODO: 在此添加控件通知处理程序代码
-	POSITION pos = m_FileList.GetFirstSelectedItemPosition(); // todo
-	if(pos == NULL) return ;
-	int iCurrSel= m_FileList.GetNextSelectedItem(pos);
-	DWORD ch = m_FileList.GetItemData(iCurrSel);//ch保存选中的磁盘
-	if (ch =='A' || ch=='B')//A,B盘不处理
-		return;
-
-	//设置当前目录
-	m_CurrPath.Format("%c:",(char)ch);
-	UpdateData(FALSE);
-	//拼接列举路径
-	m_SendPath = m_CurrPath + "\\*";
-	//列举目录
-
-	unsigned dwThreadId;
-	m_hWorkThread  =
-		(HANDLE)_beginthreadex(NULL,				 
-		0,					 
-		ListDirectory,  
-		this,   
-		0, 		 
-		&dwThreadId);
-
-	if (m_hWorkThread == NULL)
-		m_wndStatusBar.SetText("获取远程目录列表失败", 0, 0);
-
-	*pResult = 0;
-}
-
-
 unsigned  __stdcall ListDirectory(void * pParam)
 {
 	CFileManage *This = (CFileManage*)pParam; 
@@ -343,4 +309,70 @@ int CFileManage::GetIconIndex(LPCTSTR lpszPath, BOOL bIsDir, BOOL bSelected)
 	//indeximage=pSmallImage->Add(sfi.hIcon);//向ImageList里面添加图标
 	//return  sfi.iIcon;
 	return  3;
+}
+
+
+void CFileManage::OnNMRDblclkFilelist(NMHDR *pNMHDR, LRESULT *pResult)
+{
+	LPNMITEMACTIVATE pNMItemActivate = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
+	// TODO: 在此添加控件通知处理程序代码
+	POSITION pos = m_FileList.GetFirstSelectedItemPosition(); // todo
+	if(pos == NULL) return ;
+	int iCurrSel= m_FileList.GetNextSelectedItem(pos);
+	DWORD ch = m_FileList.GetItemData(iCurrSel);//ch保存选中的磁盘
+	if (ch =='A' || ch=='B')//A,B盘不处理
+		return;
+
+	//设置当前目录
+	m_CurrPath.Format("%c:",(char)ch);
+	UpdateData(FALSE);
+	//拼接列举路径
+	m_SendPath = m_CurrPath + "\\*";
+	//列举目录
+
+	unsigned dwThreadId;
+	m_hWorkThread  =
+		(HANDLE)_beginthreadex(NULL,				 
+		0,					 
+		ListDirectory,  
+		this,   
+		0, 		 
+		&dwThreadId);
+
+	if (m_hWorkThread == NULL)
+		m_wndStatusBar.SetText("获取远程目录列表失败", 0, 0);
+	*pResult = 0;
+}
+
+
+void CFileManage::OnNMDblclkFilelist(NMHDR *pNMHDR, LRESULT *pResult)
+{
+	LPNMITEMACTIVATE pNMItemActivate = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);	
+	// TODO: 在此添加控件通知处理程序代码
+	POSITION pos = m_FileList.GetFirstSelectedItemPosition(); // todo
+	if(pos == NULL) return ;
+	int iCurrSel= m_FileList.GetNextSelectedItem(pos);
+	DWORD ch = m_FileList.GetItemData(iCurrSel);//ch保存选中的磁盘
+	if (ch =='A' || ch=='B')//A,B盘不处理
+		return;
+
+	//设置当前目录
+	m_CurrPath.Format("%c:",(char)ch);
+	UpdateData(FALSE);
+	//拼接列举路径
+	m_SendPath = m_CurrPath + "\\*";
+	//列举目录
+
+	unsigned dwThreadId;
+	m_hWorkThread  =
+		(HANDLE)_beginthreadex(NULL,				 
+		0,					 
+		ListDirectory,  
+		this,   
+		0, 		 
+		&dwThreadId);
+
+	if (m_hWorkThread == NULL)
+		m_wndStatusBar.SetText("获取远程目录列表失败", 0, 0);
+	*pResult = 0;
 }

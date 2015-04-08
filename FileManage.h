@@ -66,8 +66,8 @@ protected:
 	CImageList *pBigImage,*pSmallImage;
 	int indeximage;
 public:
-	
-	afx_msg void OnLvnItemchangedFilelist(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnNMRDblclkFilelist(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnNMDblclkFilelist(NMHDR *pNMHDR, LRESULT *pResult);
 };
 
 //{{AFX_INSERT_LOCATION}}
