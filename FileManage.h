@@ -18,25 +18,25 @@
 
 class CFileManage : public CDialog
 {
-// Construction
+	// Construction
 public:
 	CFileManage(CWnd* pParent = NULL);   // standard constructor
-    void SetConnSocket(SOCKET socket);
-// Dialog Data
+	void SetConnSocket(SOCKET socket);
+	// Dialog Data
 	//{{AFX_DATA(CFileManage)
 	enum { IDD = IDD_FILEMANAGE };
 	CListCtrl	m_FileList;
 	//}}AFX_DATA
 
-   ~CFileManage();
-// Overrides
+	~CFileManage();
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CFileManage)
-	protected:
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
 
 	// Generated message map functions
@@ -53,21 +53,18 @@ protected:
 	MsgHead m_MsgHead;
 	char * m_Buffer;
 	void GetRootDrivers();
- 
+
 	friend unsigned  __stdcall ListDriver(void * pParam);//列出磁盘信息
 	void OnWorkBegin();
 	void OnWorkEnd();
-	friend unsigned  __stdcall ListDirectory(void * pParam);
+	friend unsigned  __stdcall ListFiles(void * pParam);
 	int  GetIconIndex(LPCTSTR lpszPath, BOOL bIsDir, BOOL bSelected = FALSE);
 	CString m_CurrPath;//当前打开的文件路径
 	CString m_SendPath;
-    
-	CImageList fileListImage;
-	CImageList *pBigImage,*pSmallImage;
-	int indeximage;
+
 public:
-	afx_msg void OnNMRDblclkFilelist(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void OnNMDblclkFilelist(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnUp();
 };
 
 //{{AFX_INSERT_LOCATION}}

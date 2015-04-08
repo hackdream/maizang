@@ -322,6 +322,7 @@ BEGIN
         MENUITEM "上传文件",                        ID_FILE_UPLOAD
         MENUITEM "下载文件",                        ID_FILE_DOWNLOAD
         MENUITEM "刷新",                          ID_FILE_FRESH
+        MENUITEM "向上",                          ID_UP
     END
 END
 
@@ -352,7 +353,7 @@ END
 
 IDR_TOOLBAR_FILE TOOLBAR 32, 16
 BEGIN
-    BUTTON      ID_FILE_UP
+    BUTTON      ID_UP
     BUTTON      ID_FILE_COPY
     BUTTON      ID_FILE_PASTE
     BUTTON      ID_FILE_DELETE
