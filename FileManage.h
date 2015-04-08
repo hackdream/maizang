@@ -25,7 +25,6 @@ public:
 // Dialog Data
 	//{{AFX_DATA(CFileManage)
 	enum { IDD = IDD_FILEMANAGE };
-	CTreeCtrl	m_FileTree;
 	CListCtrl	m_FileList;
 	//}}AFX_DATA
 
@@ -43,14 +42,12 @@ protected:
 	// Generated message map functions
 	//{{AFX_MSG(CFileManage)
 	virtual BOOL OnInitDialog();
-	afx_msg void OnSelchangedFiletree(NMHDR* pNMHDR, LRESULT* pResult);
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 protected:
 	CTrueColorToolBar m_wndToolBar;
 	CStatusBarCtrl m_wndStatusBar;
-	CMenu m_FileMenu;
-	CImageList ImgListTree;//文件传输框的列表控件
+	CMenu m_FileMenu;	
 	SOCKET m_ConnSocket;
 	HANDLE m_hWorkThread;
 	MsgHead m_MsgHead;
@@ -65,9 +62,12 @@ protected:
 	CString m_CurrPath;//当前打开的文件路径
 	CString m_SendPath;
     
-
+	CImageList fileListImage;
 	CImageList *pBigImage,*pSmallImage;
 	int indeximage;
+public:
+	
+	afx_msg void OnLvnItemchangedFilelist(NMHDR *pNMHDR, LRESULT *pResult);
 };
 
 //{{AFX_INSERT_LOCATION}}
