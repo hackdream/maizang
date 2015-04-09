@@ -44,6 +44,7 @@ BEGIN_MESSAGE_MAP(CFileManage, CDialog)
 	//}}AFX_MSG_MA	
 	ON_NOTIFY(NM_DBLCLK, IDC_FILELIST, &CFileManage::OnNMDblclkFilelist)
 	ON_COMMAND(ID_UP, &CFileManage::OnUp)
+	ON_COMMAND(ID_FILE_FRESH, &CFileManage::OnFileFresh)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -224,7 +225,6 @@ unsigned  __stdcall ListFiles(void * pParam)
 	CFileManage *This = (CFileManage*)pParam; 
 	This->OnWorkBegin();
 
-
 	//发送获取盘符命令
 	This->m_MsgHead.dwCmd  = CMD_FILEDIRECTORY;
 	This->m_MsgHead.dwSize = This->m_SendPath.GetLength();
@@ -267,12 +267,10 @@ unsigned  __stdcall ListFiles(void * pParam)
 		int iIcon = 0, iInsertItem = 0;
 		if(pInfo[i].iType == 2)//文件
 		{
-			iIcon = This->GetIconIndex(pInfo[i].cFileName, FALSE);
 			iInsertItem =This->m_FileList.GetItemCount();				
 		}
 		if(pInfo[i].iType == 1)//文件夹
-		{
-			iIcon = This->GetIconIndex(pInfo[i].cFileName, TRUE);
+		{	
 			strcpy(pInfo[i].cAttrib,"文件夹");
 			iInsertItem = 0;
 		}
@@ -288,22 +286,8 @@ unsigned  __stdcall ListFiles(void * pParam)
 	str.Format("共有文件、文件夹 %d个", dwNum);
 	This->m_wndStatusBar.SetText(str, 1, 0);
 	This->OnWorkEnd();
-
 	return 0;
 }
-
-int CFileManage::GetIconIndex(LPCTSTR lpszPath, BOOL bIsDir, BOOL bSelected)
-{
-	SHFILEINFO sfi;
-	memset(&sfi, 0, sizeof(sfi));
-
-	SHGetFileInfo(lpszPath, 
-		FILE_ATTRIBUTE_NORMAL,
-		&sfi, sizeof(sfi),
-		SHGFI_ICON|SHGFI_USEFILEATTRIBUTES|SHGFI_TYPENAME );  
-	return  3;
-}
-
 
 void CFileManage::OnNMDblclkFilelist(NMHDR *pNMHDR, LRESULT *pResult)
 {
@@ -323,24 +307,10 @@ void CFileManage::OnNMDblclkFilelist(NMHDR *pNMHDR, LRESULT *pResult)
 			m_CurrPath = m_CurrPath + "\\" + m_FileList.GetItemText(iCurrSel,0);
 			m_SendPath = m_CurrPath + "\\*";
 		}
-		//列举目录线程
-		unsigned dwThreadId;
-		m_hWorkThread  =
-			(HANDLE)_beginthreadex(NULL,				 
-			0,					 
-			ListFiles,  
-			this,   
-			0, 		 
-			&dwThreadId);
-
-		if (m_hWorkThread == NULL)
-		{
-			m_wndStatusBar.SetText("获取远程目录列表失败", 0, 0);
-			m_CurrPath = "";
-		}
+		getFilesByCurrPath();	
 	}
 	else{  //双击的是文件
-
+		::MessageBox(NULL, "这是一个文件，请选中后选择下载","这是一个文件", MB_OK);
 	}
 	*pResult = 0;
 }
@@ -352,23 +322,39 @@ void CFileManage::OnUp()
 	int pos  =  m_CurrPath.ReverseFind('\\');
 	if(pos == -1){
 		m_CurrPath = "";
+		m_SendPath = "";
 		GetRootDrivers();
 	}else{
 		m_CurrPath = m_CurrPath.Left(pos);
 		m_SendPath = m_CurrPath + "\\*";
-		//列举目录线程
-		unsigned dwThreadId;
-		m_hWorkThread  =
-			(HANDLE)_beginthreadex(NULL,				 
-			0,					 
-			ListFiles,  
-			this,   
-			0, 		 
-			&dwThreadId);
-		if (m_hWorkThread == NULL)
-		{
-			m_CurrPath = "";
-			m_wndStatusBar.SetText("获取远程目录列表失败", 0, 0);
-		}
+		getFilesByCurrPath();	
 	}
+}
+
+
+void CFileManage::getFilesByCurrPath(void)
+{
+	//列举目录线程
+	unsigned dwThreadId;
+	m_hWorkThread  =
+		(HANDLE)_beginthreadex(NULL,				 
+		0,					 
+		ListFiles,  
+		this,   
+		0, 		 
+		&dwThreadId);
+	if (m_hWorkThread == NULL)
+	{
+		m_wndStatusBar.SetText("获取远程目录列表失败", 0, 0);
+		m_CurrPath = "";
+		m_SendPath = "";
+	}
+	CloseHandle(m_hWorkThread);
+}
+
+
+void CFileManage::OnFileFresh()
+{
+	// TODO: 在此添加命令处理程序代码
+	getFilesByCurrPath();
 }

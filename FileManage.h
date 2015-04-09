@@ -65,6 +65,10 @@ protected:
 public:
 	afx_msg void OnNMDblclkFilelist(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void OnUp();
+private:
+	void getFilesByCurrPath(void);
+public:
+	afx_msg void OnFileFresh();
 };
 
 //{{AFX_INSERT_LOCATION}}
