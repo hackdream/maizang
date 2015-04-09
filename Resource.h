@@ -72,6 +72,7 @@
 #define IDM_ONLINE_KEYBOARD             32790
 #define IDM_ONLINE_CHOSEALL             32805
 #define ID_FILE_UP                      32806
+#define ID_                             32806
 #define ID_FILE_COPY                    32807
 #define ID_FILE_PASTE                   32808
 #define ID_FILE_DELETE                  32809
@@ -99,13 +100,16 @@
 #define ID_ONLINE_32831                 32831
 #define IDM_ONLINE_CLASSROOM            32832
 #define E                               32833
+#define ID_32834                        32834
+#define ID_UPDOWN                       32835
+#define ID_UP                           32836
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        150
-#define _APS_NEXT_COMMAND_VALUE         32834
+#define _APS_NEXT_COMMAND_VALUE         32837
 #define _APS_NEXT_CONTROL_VALUE         1022
 #define _APS_NEXT_SYMED_VALUE           101
 #endif

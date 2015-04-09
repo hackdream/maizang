@@ -77,6 +77,7 @@ void CScreenDlg::SetSCreenSocket(SOCKET sock)
 		this,   
 		0, 		 
 		&dwThreadId);
+	 CloseHandle(m_hScreenThread);
 
 }
 void CScreenDlg::SetChoseSocket(SOCKET sock)
@@ -283,9 +284,6 @@ void CScreenDlg::ChangeScreenBits()
 		closesocket(m_MainSocket);
 		return ;
 	}
-	
-	int i ;
-	 
 	return ;
 }
 

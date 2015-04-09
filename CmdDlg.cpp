@@ -50,15 +50,10 @@ BOOL CCmdDlg::OnInitDialog()
 	// TODO: Add extra initialization here
 	SetWindowText("CmdShell");
 	m_Edit.SetLimitText(MAXDWORD);
-
-
 	Output = "";
-	_beginthreadex(NULL, 0, RecvCmdDataThread, this, 0, NULL);
-
-
-
+	HANDLE handle = (HANDLE)_beginthreadex(NULL, 0, RecvCmdDataThread, this, 0, NULL);
+	CloseHandle(handle);
 	return TRUE;  // return TRUE unless you set the focus to a control
-
 }
 
 

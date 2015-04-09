@@ -18,56 +18,56 @@
 
 class CFileManage : public CDialog
 {
-// Construction
+	// Construction
 public:
 	CFileManage(CWnd* pParent = NULL);   // standard constructor
-    void SetConnSocket(SOCKET socket);
-// Dialog Data
+	void SetConnSocket(SOCKET socket);
+	// Dialog Data
 	//{{AFX_DATA(CFileManage)
 	enum { IDD = IDD_FILEMANAGE };
-	CTreeCtrl	m_FileTree;
 	CListCtrl	m_FileList;
 	//}}AFX_DATA
 
-   ~CFileManage();
-// Overrides
+	~CFileManage();
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CFileManage)
-	protected:
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
 
 	// Generated message map functions
 	//{{AFX_MSG(CFileManage)
 	virtual BOOL OnInitDialog();
-	afx_msg void OnSelchangedFiletree(NMHDR* pNMHDR, LRESULT* pResult);
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 protected:
 	CTrueColorToolBar m_wndToolBar;
 	CStatusBarCtrl m_wndStatusBar;
-	CMenu m_FileMenu;
-	CImageList ImgListTree;//文件传输框的列表控件
+	CMenu m_FileMenu;	
 	SOCKET m_ConnSocket;
 	HANDLE m_hWorkThread;
 	MsgHead m_MsgHead;
 	char * m_Buffer;
 	void GetRootDrivers();
- 
+
 	friend unsigned  __stdcall ListDriver(void * pParam);//列出磁盘信息
-	void OnWorkBegin();
-	void OnWorkEnd();
-	friend unsigned  __stdcall ListDirectory(void * pParam);
+	friend unsigned  __stdcall ListFiles(void * pParam);
 	int  GetIconIndex(LPCTSTR lpszPath, BOOL bIsDir, BOOL bSelected = FALSE);
 	CString m_CurrPath;//当前打开的文件路径
 	CString m_SendPath;
-    
 
-	CImageList *pBigImage,*pSmallImage;
-	int indeximage;
+public:
+	afx_msg void OnNMDblclkFilelist(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnUp();
+private:
+	void getFilesByCurrPath(void);
+public:
+	afx_msg void OnFileFresh();
+	afx_msg void OnFileDownload();
 };
 
 //{{AFX_INSERT_LOCATION}}

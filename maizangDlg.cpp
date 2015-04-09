@@ -833,7 +833,9 @@ unsigned  __stdcall  ThreadAccept(void * pParam)
 									 pParam2,   //其指向2个参数所保存的地址   传递2个参数
 									 0, 		 
 									 &dwThreadId);
+		CloseHandle(m_hThread);
 		}
+
 	}
  
 	return 0;
@@ -871,7 +873,8 @@ unsigned  __stdcall  ThreadAccept(void * pParam)
           }
 		  else
 		  {
-		 
+			CloseHandle(hAcceptThread);
+			CloseHandle(hCheckThread);
 			  char StrPort[100];
 			  CString m_listen;
 			  m_listen.Format("监听端口 %d 成功!!!", Port);
@@ -885,6 +888,7 @@ unsigned  __stdcall  ThreadAccept(void * pParam)
 									 this,   
 									 0,
 									 &dwThreadId);
+						CloseHandle(hAcceptThread);
 			  return ;
 		  }
 
