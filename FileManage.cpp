@@ -341,9 +341,75 @@ void CFileManage::OnFileFresh()
 	getFilesByCurrPath();
 }
 
+CString CFileManage::chooseDirectory(){
+	TCHAR           szFolderPath[MAX_PATH] = {0};  
+	CString         strFolderPath = TEXT("");  
+	BROWSEINFO      sInfo;  
+	::ZeroMemory(&sInfo, sizeof(BROWSEINFO));  
+	sInfo.pidlRoot   = 0;  
+	sInfo.lpszTitle   = _T("请选择一个文件夹：");  
+	sInfo.ulFlags   = BIF_DONTGOBELOWDOMAIN | BIF_RETURNONLYFSDIRS | BIF_NEWDIALOGSTYLE | BIF_EDITBOX;  
+	sInfo.lpfn     = NULL;  
 
+	// 显示文件夹选择对话框  
+	LPITEMIDLIST lpidlBrowse = ::SHBrowseForFolder(&sInfo);   
+	if (lpidlBrowse != NULL)  
+	{  
+		// 取得文件夹名  
+		if (::SHGetPathFromIDList(lpidlBrowse,szFolderPath))    
+		{  
+			strFolderPath = szFolderPath;  
+		}  
+	}  
+	if(lpidlBrowse != NULL)  
+	{  
+		::CoTaskMemFree(lpidlBrowse);  
+	}  
+	return strFolderPath; 
+}
 void CFileManage::OnFileDownload()
 {
 	// TODO: 在此添加命令处理程序代码
+	CString savePath = chooseDirectory();
+	POSITION pos = m_FileList.GetFirstSelectedItemPosition(); 
+	while(pos){	
+		int iCurrSel= m_FileList.GetNextSelectedItem(pos);
+		int fileCategory = m_FileList.GetItemData(iCurrSel);
+		if((fileCategory >= 'A' && fileCategory <= 'Z') || (fileCategory >= 'a' && fileCategory <= 'z')) {  //如果要求传送整个磁盘则不传送   磁盘一般有太多数据
+				continue;
+		}
+		CString fileName = m_FileList.GetItemText(iCurrSel, 0);
 
+		if(fileCategory !=2 ){   //是目录
+			directoryDownload(savePath, fileName);
+		}
+		else{
+			fileDownload(savePath ,fileName);
+		}
+	}
+}
+
+
+void CFileManage::directoryDownload(CString localPath, CString fileName){
+}
+
+
+void CFileManage::fileDownload(CString localPath, CString fileName){
+	CString remotePath = m_CurrPath + "\\" + fileName;
+	localPath = localPath + "\\" + fileName;
+
+	m_MsgHead.dwCmd = CMD_GETFILE;
+	m_MsgHead.dwSize = remotePath.GetLength();
+	if(!SendMsg(m_ConnSocket, (LPSTR)(LPCTSTR)remotePath, &m_MsgHead)  ) 
+	{
+		m_wndStatusBar.SetText("通信失败!", 0, 0);	
+		return ;
+	}
+	CFile file(localPath, CFile::modeCreate | CFile::modeWrite);
+	while(RecvMsg(m_ConnSocket, m_Buffer, &m_MsgHead)){
+		file.Write(m_Buffer, m_MsgHead.dwSize);
+		if(m_MsgHead.dwSize < MAX_FILE_DATA_BUFFER_SIZE) break;
+	}
+	m_wndStatusBar.SetText(remotePath + "   下载成功", 0, 0);
+	file.Close();
 }

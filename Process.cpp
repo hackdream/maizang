@@ -87,7 +87,7 @@ BOOL CProcess::OnInitDialog(){
 	SetIcon(m_hIcon, FALSE);
 	InitializeViews();
 	HANDLE handle = (HANDLE)_beginthreadex(NULL, 0, RecvProcessDataThread, this, 0, NULL);
-	//CloseHandle(handle);
+	CloseHandle(handle);
 	OnRefresh();
 	return TRUE;
 }

@@ -65,6 +65,9 @@ public:
 	afx_msg void OnUp();
 private:
 	void getFilesByCurrPath(void);
+	CString chooseDirectory(); //选中某个目录的对话框
+	void fileDownload(CString localPath, CString fileName);
+	void directoryDownload(CString localPath, CString fileName);
 public:
 	afx_msg void OnFileFresh();
 	afx_msg void OnFileDownload();

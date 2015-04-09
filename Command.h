@@ -41,6 +41,11 @@ using std::string;
 #define CMD_ENDTASK WM_USER+916
 
 // 912 已经占用
+
+//  file  文件管理相关
+#define CMD_GETFILE WM_USER + 1000
+#define	MAX_FILE_DATA_BUFFER_SIZE			1024 * 8 // 文件一次最大发送数据长度  
+
 //消息命令头
 
 struct ProcsInfo{
