@@ -55,8 +55,6 @@ protected:
 	void GetRootDrivers();
 
 	friend unsigned  __stdcall ListDriver(void * pParam);//列出磁盘信息
-	void OnWorkBegin();
-	void OnWorkEnd();
 	friend unsigned  __stdcall ListFiles(void * pParam);
 	int  GetIconIndex(LPCTSTR lpszPath, BOOL bIsDir, BOOL bSelected = FALSE);
 	CString m_CurrPath;//当前打开的文件路径
@@ -69,6 +67,7 @@ private:
 	void getFilesByCurrPath(void);
 public:
 	afx_msg void OnFileFresh();
+	afx_msg void OnFileDownload();
 };
 
 //{{AFX_INSERT_LOCATION}}

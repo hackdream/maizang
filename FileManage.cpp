@@ -45,6 +45,7 @@ BEGIN_MESSAGE_MAP(CFileManage, CDialog)
 	ON_NOTIFY(NM_DBLCLK, IDC_FILELIST, &CFileManage::OnNMDblclkFilelist)
 	ON_COMMAND(ID_UP, &CFileManage::OnUp)
 	ON_COMMAND(ID_FILE_FRESH, &CFileManage::OnFileFresh)
+	ON_COMMAND(ID_FILE_DOWNLOAD, &CFileManage::OnFileDownload)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -128,28 +129,25 @@ void CFileManage::GetRootDrivers()
 	{
 		m_wndStatusBar.SetText("获取远程电脑磁盘信息失败", 0 ,0);
 	}
+	CloseHandle(m_hWorkThread);
 }
 
 
 unsigned  __stdcall  ListDriver(void * pParam)	
 {
 	CFileManage *This = (CFileManage*)pParam;  
-	This->OnWorkBegin();
 	This->m_MsgHead.dwCmd = CMD_FILEDRIVER;
 	This->m_MsgHead.dwSize = 0;
 	if(!SendMsg(This->m_ConnSocket, This->m_Buffer, &This->m_MsgHead) || 
 		!RecvMsg(This->m_ConnSocket, This->m_Buffer, &This->m_MsgHead)  ) 
 	{
-
-		This->m_wndStatusBar.SetText("通信失败!", 0, 0);
-		This->OnWorkEnd();
+		This->m_wndStatusBar.SetText("通信失败!", 0, 0);	
 		return 0;
 	}
 
 	if(This->m_MsgHead.dwCmd != CMD_SUCCEED)
 	{
 		This->m_wndStatusBar.SetText("获取远程主机磁盘信息失败", 0, 0);
-		This->OnWorkEnd();
 		return 0;
 	}
 
@@ -206,25 +204,12 @@ unsigned  __stdcall  ListDriver(void * pParam)
 	}
 
 	This->m_wndStatusBar.SetText("获取远程磁盘成功", 0, 0);
-	This->OnWorkEnd();
 	return 0;
-}
-void CFileManage::OnWorkBegin()
-{
-	m_FileList.EnableWindow(FALSE);//将列表设置为不可用 变灰
-}
-void CFileManage::OnWorkEnd()
-{
-	m_FileList.EnableWindow(TRUE);//将列表设置为不可用 变灰
-	CloseHandle(m_hWorkThread);
-	m_hWorkThread = NULL;
 }
 
 unsigned  __stdcall ListFiles(void * pParam)
 {
 	CFileManage *This = (CFileManage*)pParam; 
-	This->OnWorkBegin();
-
 	//发送获取盘符命令
 	This->m_MsgHead.dwCmd  = CMD_FILEDIRECTORY;
 	This->m_MsgHead.dwSize = This->m_SendPath.GetLength();
@@ -235,7 +220,6 @@ unsigned  __stdcall ListFiles(void * pParam)
 	{
 		//数据传输失败
 		This->m_wndStatusBar.SetText("通信失败", 0, 0);
-		This->OnWorkEnd();
 		return 0;
 	}
 	if(This->m_MsgHead.dwCmd != CMD_SUCCEED)
@@ -251,7 +235,6 @@ unsigned  __stdcall ListFiles(void * pParam)
 			This->m_wndStatusBar.SetText("获取远程目录失败", 0, 0); 
 			This->m_CurrPath = "";
 		}
-		This->OnWorkEnd();
 		return 0;
 	}
 
@@ -285,7 +268,6 @@ unsigned  __stdcall ListFiles(void * pParam)
 	CString str;
 	str.Format("共有文件、文件夹 %d个", dwNum);
 	This->m_wndStatusBar.SetText(str, 1, 0);
-	This->OnWorkEnd();
 	return 0;
 }
 
@@ -357,4 +339,11 @@ void CFileManage::OnFileFresh()
 {
 	// TODO: 在此添加命令处理程序代码
 	getFilesByCurrPath();
+}
+
+
+void CFileManage::OnFileDownload()
+{
+	// TODO: 在此添加命令处理程序代码
+
 }
