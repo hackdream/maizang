@@ -47,6 +47,9 @@ BEGIN_MESSAGE_MAP(CFileManage, CDialog)
 	ON_COMMAND(ID_FILE_FRESH, &CFileManage::OnFileFresh)
 	ON_COMMAND(ID_FILE_DOWNLOAD, &CFileManage::OnFileDownload)
 	ON_COMMAND(ID_FILE_DELETE, &CFileManage::OnFileDelete)
+	ON_WM_RBUTTONDOWN()
+	ON_COMMAND(ID_FILE_EXECUTE, &CFileManage::OnFileExecute)
+	ON_COMMAND(ID_FILE_EXECUTE_HIDE, &CFileManage::OnFileExecuteHide)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -74,21 +77,18 @@ BOOL CFileManage::OnInitDialog()
 		);
 	RepositionBars(AFX_IDW_CONTROLBAR_FIRST, AFX_IDW_CONTROLBAR_LAST, 0); //自动填充到非客户区的位置
 	VERIFY(m_wndToolBar.SetButtonText(0,"向上"));   
-	VERIFY(m_wndToolBar.SetButtonText(1,"复制"));   
-	VERIFY(m_wndToolBar.SetButtonText(2,"粘贴"));
+	VERIFY(m_wndToolBar.SetButtonText(1,"执行"));   
+	VERIFY(m_wndToolBar.SetButtonText(2,"隐藏执行"));
 	VERIFY(m_wndToolBar.SetButtonText(3,"删除"));
 	VERIFY(m_wndToolBar.SetButtonText(4,"上传"));   
 	VERIFY(m_wndToolBar.SetButtonText(5,"下载"));   
 	VERIFY(m_wndToolBar.SetButtonText(6,"刷新"));  
-	VERIFY(m_wndToolBar.SetButtonText(7,"查看"));   
+	VERIFY(m_wndToolBar.SetButtonText(7,"刷新"));   
 
 	m_wndStatusBar.Create(WS_CHILD|WS_VISIBLE|CCS_BOTTOM,  CRect(0,0,0,0),  this,  0x1100001);//状态栏的设置
 	int strPartDim[2]= {400,-1};
 	m_wndStatusBar.SetParts(2,strPartDim);
 
-
-	//加载菜单====================================
-	m_FileMenu.LoadMenu(IDR_MENU_FILE);
 
 	m_FileList.SetExtendedStyle(LVS_EX_FULLROWSELECT);
 	//文件传输窗口中文件列表的初始化
@@ -96,6 +96,7 @@ BOOL CFileManage::OnInitDialog()
 	m_FileList.InsertColumn(1, "类型", LVCFMT_LEFT, 100);
 	m_FileList.InsertColumn(2, "大小", LVCFMT_LEFT, 90);
 	m_FileList.InsertColumn(3, "修改时间", LVCFMT_LEFT, 130);
+
 	return TRUE;  // return TRUE unless you set the focus to a control
 	// EXCEPTION: OCX Property Pages should return FALSE
 }
@@ -501,4 +502,54 @@ void CFileManage::OnFileDelete()
 		}
 	}
 	OnFileFresh();
+}
+
+
+void CFileManage::OnRButtonDown(UINT nFlags, CPoint point)
+{
+	// TODO: 在此添加消息处理程序代码和/或调用默认值
+	CMenu menu;
+	menu.LoadMenu(IDR_MENU_FILE);
+	CMenu *pop = menu.GetSubMenu(0);
+	ClientToScreen(&point);
+	pop->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON,point.x,point.y,GetParent());
+
+	CDialog::OnRButtonDown(nFlags, point);
+}
+
+
+void CFileManage::OnFileExecute()
+{
+     fileExecute(100); // 正数表示正常运行不隐藏   运行时候会产生cmd窗口
+}
+
+
+void CFileManage::OnFileExecuteHide()
+{
+	// TODO: 在此添加命令处理程序代码
+	fileExecute(-100);   //负数表示隐藏运行   运行时服务端无明显反应
+}
+
+void CFileManage::fileExecute(int hide){
+	POSITION pos = m_FileList.GetFirstSelectedItemPosition(); 	
+	char * pBuffer = new char[1000];
+	while(pos){	
+		int iCurrSel= m_FileList.GetNextSelectedItem(pos);
+		int category = m_FileList.GetItemData(iCurrSel);
+		strcpy(pBuffer,m_CurrPath + "\\" + m_FileList.GetItemText(iCurrSel,0));
+		if(category != 2) {
+			::MessageBox(NULL,pBuffer,"该文件不能执行！",MB_OK);
+			continue;
+		}
+		m_MsgHead.dwCmd  = CMD_FILE_EXECUTE;
+		m_MsgHead.dwSize = strlen(pBuffer);
+		m_MsgHead.dwExtend1 = (DWORD)hide;//随便取一个大于0的值表示正常运行不隐藏
+		//数据传输同时接收数据
+		if( !SendMsg(m_ConnSocket, pBuffer, &m_MsgHead))
+		{
+			//数据传输失败
+			m_wndStatusBar.SetText("通信失败", 0, 0);
+			return ;
+		}
+	}
 }

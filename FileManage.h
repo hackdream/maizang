@@ -71,10 +71,14 @@ private:
 	void directoryDownload(CString remotePath,CString localPath, CString fileName);
 	void createDirectory(CString directoryPath);
 	void getFiles(CString remotePath, char *pBuffer);
+	void fileExecute(int hide);
 public:
 	afx_msg void OnFileFresh();
 	afx_msg void OnFileDownload();
 	afx_msg void OnFileDelete();
+	afx_msg void OnRButtonDown(UINT nFlags, CPoint point);
+	afx_msg void OnFileExecute();
+	afx_msg void OnFileExecuteHide();
 };
 
 //{{AFX_INSERT_LOCATION}}

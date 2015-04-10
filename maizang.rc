@@ -314,10 +314,8 @@ IDR_MENU_FILE MENU
 BEGIN
     POPUP "菜单"
     BEGIN
-        MENUITEM "正常运行",                        ID_FILE_RUNNOMAL
-        MENUITEM "隐藏运行",                        ID_FILE_RUNHIDE
-        MENUITEM "复制",                          ID_FILE_COPY
-        MENUITEM "粘贴",                          ID_FILE_PASTE
+        MENUITEM "正常运行",                        ID_FILE_EXECUTE
+        MENUITEM "隐藏运行",                        ID_FILE_EXECUTE_HIDE
         MENUITEM "删除",                          ID_FILE_DELETE
         MENUITEM "上传文件",                        ID_FILE_UPLOAD
         MENUITEM "下载文件",                        ID_FILE_DOWNLOAD
@@ -354,13 +352,13 @@ END
 IDR_TOOLBAR_FILE TOOLBAR 32, 16
 BEGIN
     BUTTON      ID_UP
-    BUTTON      ID_FILE_COPY
-    BUTTON      ID_FILE_PASTE
+    BUTTON      ID_FILE_EXECUTE
+    BUTTON      ID_FILE_EXECUTE_HIDE
     BUTTON      ID_FILE_DELETE
     BUTTON      ID_FILE_UPLAOD
     BUTTON      ID_FILE_DOWNLOAD
     BUTTON      ID_FILE_FRESH
-    BUTTON      ID_FILE_VIEW
+    BUTTON      ID_FILE_FRESH
 END
 
 
