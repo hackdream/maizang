@@ -74,6 +74,7 @@ private:
 public:
 	afx_msg void OnFileFresh();
 	afx_msg void OnFileDownload();
+	afx_msg void OnFileDelete();
 };
 
 //{{AFX_INSERT_LOCATION}}

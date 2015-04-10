@@ -46,6 +46,7 @@ BEGIN_MESSAGE_MAP(CFileManage, CDialog)
 	ON_COMMAND(ID_UP, &CFileManage::OnUp)
 	ON_COMMAND(ID_FILE_FRESH, &CFileManage::OnFileFresh)
 	ON_COMMAND(ID_FILE_DOWNLOAD, &CFileManage::OnFileDownload)
+	ON_COMMAND(ID_FILE_DELETE, &CFileManage::OnFileDelete)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -270,7 +271,6 @@ void CFileManage::OnNMDblclkFilelist(NMHDR *pNMHDR, LRESULT *pResult)
 	*pResult = 0;
 }
 
-
 void CFileManage::OnUp()
 {
 	// TODO: 在此添加命令处理程序代码
@@ -412,14 +412,14 @@ void CFileManage::directoryDownload(CString remotePath, CString localPath, CStri
 }
 
 void CFileManage::createDirectory(CString directoryPath){
-/*	if(PathIsDirectory(directoryPath) == FALSE || CreateDirectory(directoryPath,NULL) != 0)   
+	/*	if(PathIsDirectory(directoryPath) == FALSE || CreateDirectory(directoryPath,NULL) != 0)   
 	{    
-		m_wndStatusBar.SetText(directoryPath + "   文件夹创建成功", 0, 0);
+	m_wndStatusBar.SetText(directoryPath + "   文件夹创建成功", 0, 0);
 	}  
 	else
 	{		
-		if(AfxMessageBox("下载文件夹时发生错误！是否继续?",   MB_YESNO)   ==   IDYES)   
-			return;
+	if(AfxMessageBox("下载文件夹时发生错误！是否继续?",   MB_YESNO)   ==   IDYES)   
+	return;
 	}
 	*/
 	CreateDirectory(directoryPath,NULL);
@@ -478,4 +478,30 @@ void CFileManage::fileDownload(CString remotePath, CString localPath, CString fi
 	}
 	m_wndStatusBar.SetText(remotePath + "   下载成功", 0, 0);
 	file.Close();
+}
+
+
+void CFileManage::OnFileDelete()
+{
+	// TODO: 在此添加命令处理程序代码
+	POSITION pos = m_FileList.GetFirstSelectedItemPosition(); 	
+	char * pBuffer = new char[1000];
+	while(pos){	
+		int iCurrSel= m_FileList.GetNextSelectedItem(pos);
+		strcpy(pBuffer, m_CurrPath + "\\" + m_FileList.GetItemText(iCurrSel, 0));
+		m_MsgHead.dwCmd = CMD_FILE_DELETE;
+		m_MsgHead.dwSize = strlen(pBuffer);
+
+		if(!SendMsg(m_ConnSocket, pBuffer, &m_MsgHead) || 
+			!RecvMsg(m_ConnSocket, pBuffer, &m_MsgHead)) 
+		{
+			m_wndStatusBar.SetText("通信失败!", 0, 0);	
+			return ;
+		}
+		if(m_MsgHead.dwCmd != CMD_SUCCEED)
+		{
+			m_wndStatusBar.SetText(m_CurrPath + "\\" + m_FileList.GetItemText(iCurrSel, 0) + "删除失败", 0, 0);
+		}
+	}
+	OnFileFresh();
 }
