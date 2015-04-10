@@ -210,37 +210,10 @@ unsigned  __stdcall  ListDriver(void * pParam)
 unsigned  __stdcall ListFiles(void * pParam)
 {
 	CFileManage *This = (CFileManage*)pParam; 
-	//发送获取盘符命令
-	This->m_MsgHead.dwCmd  = CMD_FILEDIRECTORY;
-	This->m_MsgHead.dwSize = This->m_SendPath.GetLength();
-	strcpy(This->m_Buffer,This->m_SendPath);
-	//数据传输同时接收数据
-	if( !SendMsg(This->m_ConnSocket, This->m_Buffer, &This->m_MsgHead) ||
-		!RecvMsg(This->m_ConnSocket, This->m_Buffer, &This->m_MsgHead))
-	{
-		//数据传输失败
-		This->m_wndStatusBar.SetText("通信失败", 0, 0);
-		return 0;
-	}
-	if(This->m_MsgHead.dwCmd != CMD_SUCCEED)
-	{
-		//数据传输失败
-		if(This->m_MsgHead.dwCmd == CMD_DIRFLODERERR)
-		{
-			This->m_CurrPath = "";
-			This->m_wndStatusBar.SetText("目录不能访问", 0, 0); 
-		}
-		else
-		{
-			This->m_wndStatusBar.SetText("获取远程目录失败", 0, 0); 
-			This->m_CurrPath = "";
-		}
-		return 0;
-	}
+	This->getFiles(This->m_SendPath, This->m_Buffer);
 
 	//显示文件列表
 	This->m_FileList.DeleteAllItems();
-
 	DWORD dwNum = This->m_MsgHead.dwSize /sizeof(FileInfo);
 	BYTE * m_DesBuf = (LPBYTE)(This->m_Buffer);
 	LPFileInfo pInfo = (LPFileInfo) m_DesBuf;
@@ -370,66 +343,93 @@ CString CFileManage::chooseDirectory(){
 void CFileManage::OnFileDownload()
 {
 	// TODO: 在此添加命令处理程序代码
-	CString savePath = chooseDirectory();
-	POSITION pos = m_FileList.GetFirstSelectedItemPosition(); 
-	while(pos){	
-		int iCurrSel= m_FileList.GetNextSelectedItem(pos);
-		int fileCategory = m_FileList.GetItemData(iCurrSel);
-		if((fileCategory >= 'A' && fileCategory <= 'Z') || (fileCategory >= 'a' && fileCategory <= 'z')) {  //如果要求传送整个磁盘则不传送   磁盘一般有太多数据
-				continue;
-		}
-		CString fileName = m_FileList.GetItemText(iCurrSel, 0);
-
-		if(fileCategory !=2 ){   //是目录
-			directoryDownload(m_CurrPath, savePath, fileName);
-		}
-		else{
-			fileDownload(m_CurrPath, savePath ,fileName);
-		}
+	unsigned dwThreadId;
+	HANDLE handle =
+		(HANDLE)_beginthreadex(NULL,				 
+		0,					 
+		downLoadThread,  
+		this,   
+		0, 		 
+		&dwThreadId);
+	if(handle == NULL)
+	{
+		m_wndStatusBar.SetText("下载失败", 0 ,0);
 	}
+	CloseHandle(handle);
 }
 
 
+unsigned  __stdcall downLoadThread(void * pParam)	{
+	CFileManage *This = (CFileManage*)pParam; 
+	CString savePath = This->chooseDirectory();
+	POSITION pos = This->m_FileList.GetFirstSelectedItemPosition(); 
+	while(pos){	
+		int iCurrSel= This->m_FileList.GetNextSelectedItem(pos);
+		int fileCategory = This->m_FileList.GetItemData(iCurrSel);
+		if((fileCategory >= 'A' && fileCategory <= 'Z') || (fileCategory >= 'a' && fileCategory <= 'z')) {  //如果要求传送整个磁盘则不传送   磁盘一般有太多数据
+			continue;
+		}
+		CString fileName = This->m_FileList.GetItemText(iCurrSel, 0);
+
+		if(fileCategory !=2 ){   //是目录
+			This->directoryDownload(This->m_CurrPath, savePath, fileName);
+		}
+		else{
+			This->fileDownload(This->m_CurrPath, savePath ,fileName);
+		}
+	}
+	return 0 ;
+}
+
 void CFileManage::directoryDownload(CString remotePath, CString localPath, CString fileName){
+	m_wndStatusBar.SetText(remotePath + "   文件夹下载中", 0, 0);
 	remotePath = remotePath + "\\" + fileName;
 	localPath = localPath + "\\" + fileName;
 	createDirectory(localPath);
-	getFiles(remotePath);
+	char * pBuffer = new char[1024 * 10];
+	getFiles(remotePath + "\\*", pBuffer);
 	//对该文件夹下的每个文件进行处理
 	DWORD dwNum = m_MsgHead.dwSize /sizeof(FileInfo);
-	BYTE * m_DesBuf = (LPBYTE)(m_Buffer);
-	LPFileInfo pInfo = (LPFileInfo) m_DesBuf;
+	BYTE * desBuf = (LPBYTE)(pBuffer);
+	LPFileInfo pInfo = (LPFileInfo) desBuf;
 	for(DWORD i = 0; i < dwNum; i++)
 	{
 		if(pInfo[i].iType == 2)//文件
 		{
-			  fileDownload(remotePath, localPath, pInfo[i].cFileName); 
+			fileDownload(remotePath, localPath, pInfo[i].cFileName); 
 		}
 		if(pInfo[i].iType == 1)//文件夹
 		{	
-		      directoryDownload(remotePath, localPath, pInfo[i].cFileName);
+			directoryDownload(remotePath, localPath, pInfo[i].cFileName);
 		}
 	}
+	delete pBuffer;
+	m_wndStatusBar.SetText(remotePath + "   文件夹下载成功", 0, 0);
 }
 
 void CFileManage::createDirectory(CString directoryPath){
-			if   (!PathIsDirectory(directoryPath) && !CreateDirectory(directoryPath,NULL))   
-			{    
-				if   (AfxMessageBox("下载文件夹时发生错误！是否继续?",   MB_YESNO)   ==   IDYES)   
-					return;   
-			}   
+/*	if(PathIsDirectory(directoryPath) == FALSE || CreateDirectory(directoryPath,NULL) != 0)   
+	{    
+		m_wndStatusBar.SetText(directoryPath + "   文件夹创建成功", 0, 0);
+	}  
+	else
+	{		
+		if(AfxMessageBox("下载文件夹时发生错误！是否继续?",   MB_YESNO)   ==   IDYES)   
+			return;
+	}
+	*/
+	CreateDirectory(directoryPath,NULL);
 }
 
 
-void  CFileManage::getFiles(CString remotePath){
-	remotePath += "\\*";
+void  CFileManage::getFiles(CString remotePath, char *pBuffer){
 	//发送获取盘符命令
 	m_MsgHead.dwCmd  = CMD_FILEDIRECTORY;
 	m_MsgHead.dwSize = remotePath.GetLength();
-	strcpy(m_Buffer,remotePath);
+	strcpy(pBuffer,remotePath);
 	//数据传输同时接收数据
-	if( !SendMsg(m_ConnSocket, m_Buffer, &m_MsgHead) ||
-		!RecvMsg(m_ConnSocket, m_Buffer, &m_MsgHead))
+	if( !SendMsg(m_ConnSocket, pBuffer, &m_MsgHead) ||
+		!RecvMsg(m_ConnSocket, pBuffer, &m_MsgHead))
 	{
 		//数据传输失败
 		m_wndStatusBar.SetText("通信失败", 0, 0);
@@ -454,7 +454,7 @@ void  CFileManage::getFiles(CString remotePath){
 
 
 void CFileManage::fileDownload(CString remotePath, CString localPath, CString fileName){
-    remotePath = remotePath + "\\" + fileName;
+	remotePath = remotePath + "\\" + fileName;
 	localPath = localPath + "\\" + fileName;
 
 	m_MsgHead.dwCmd = CMD_GETFILE;

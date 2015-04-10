@@ -56,6 +56,7 @@ protected:
 
 	friend unsigned  __stdcall ListDriver(void * pParam);//列出磁盘信息
 	friend unsigned  __stdcall ListFiles(void * pParam);
+	friend unsigned  __stdcall downLoadThread(void * pParam); 
 	int  GetIconIndex(LPCTSTR lpszPath, BOOL bIsDir, BOOL bSelected = FALSE);
 	CString m_CurrPath;//当前打开的文件路径
 	CString m_SendPath;
@@ -69,7 +70,7 @@ private:
 	void fileDownload(CString remotePath, CString localPath, CString fileName);
 	void directoryDownload(CString remotePath,CString localPath, CString fileName);
 	void createDirectory(CString directoryPath);
-	void getFiles(CString remotePath);
+	void getFiles(CString remotePath, char *pBuffer);
 public:
 	afx_msg void OnFileFresh();
 	afx_msg void OnFileDownload();
