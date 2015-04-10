@@ -491,16 +491,13 @@ void CFileManage::OnFileDelete()
 		strcpy(pBuffer, m_CurrPath + "\\" + m_FileList.GetItemText(iCurrSel, 0));
 		m_MsgHead.dwCmd = CMD_FILE_DELETE;
 		m_MsgHead.dwSize = strlen(pBuffer);
-
-		if(!SendMsg(m_ConnSocket, pBuffer, &m_MsgHead) || 
-			!RecvMsg(m_ConnSocket, pBuffer, &m_MsgHead)) 
+		if(::MessageBox(NULL, pBuffer, "你确定要删除远程主机文件或文件夹？ 慎重！！！", MB_YESNO) == IDYES)
 		{
-			m_wndStatusBar.SetText("通信失败!", 0, 0);	
-			return ;
-		}
-		if(m_MsgHead.dwCmd != CMD_SUCCEED)
-		{
-			m_wndStatusBar.SetText(m_CurrPath + "\\" + m_FileList.GetItemText(iCurrSel, 0) + "删除失败", 0, 0);
+			if(!SendMsg(m_ConnSocket, pBuffer, &m_MsgHead))
+			{
+				m_wndStatusBar.SetText("通信失败!", 0, 0);	
+				return ;
+			}
 		}
 	}
 	OnFileFresh();
