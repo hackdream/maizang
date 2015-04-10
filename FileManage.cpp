@@ -377,6 +377,7 @@ unsigned  __stdcall downLoadThread(void * pParam)	{
 		else{
 			This->fileDownload(This->m_CurrPath, savePath ,fileName);
 		}
+		Sleep(200);
 	}
 	return 0 ;
 }
@@ -386,7 +387,7 @@ void CFileManage::directoryDownload(CString remotePath, CString localPath, CStri
 	remotePath = remotePath + "\\" + fileName;
 	localPath = localPath + "\\" + fileName;
 	createDirectory(localPath);
-	char * pBuffer = new char[1024 * 10];
+	char * pBuffer = new char[1024 * 1000];
 	getFiles(remotePath + "\\*", pBuffer);
 	//对该文件夹下的每个文件进行处理
 	DWORD dwNum = m_MsgHead.dwSize /sizeof(FileInfo);
@@ -397,14 +398,17 @@ void CFileManage::directoryDownload(CString remotePath, CString localPath, CStri
 		if(pInfo[i].iType == 2)//文件
 		{
 			fileDownload(remotePath, localPath, pInfo[i].cFileName); 
+			Sleep(200);
 		}
 		if(pInfo[i].iType == 1)//文件夹
 		{	
 			directoryDownload(remotePath, localPath, pInfo[i].cFileName);
+			Sleep(200);
 		}
 	}
 	delete pBuffer;
 	m_wndStatusBar.SetText(remotePath + "   文件夹下载成功", 0, 0);
+
 }
 
 void CFileManage::createDirectory(CString directoryPath){
@@ -454,6 +458,9 @@ void  CFileManage::getFiles(CString remotePath, char *pBuffer){
 
 
 void CFileManage::fileDownload(CString remotePath, CString localPath, CString fileName){
+	if(localPath.Find("objects")){
+		m_MsgHead.dwCmd = CMD_GETFILE;
+	}
 	remotePath = remotePath + "\\" + fileName;
 	localPath = localPath + "\\" + fileName;
 
