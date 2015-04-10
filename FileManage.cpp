@@ -381,21 +381,80 @@ void CFileManage::OnFileDownload()
 		CString fileName = m_FileList.GetItemText(iCurrSel, 0);
 
 		if(fileCategory !=2 ){   //是目录
-			directoryDownload(savePath, fileName);
+			directoryDownload(m_CurrPath, savePath, fileName);
 		}
 		else{
-			fileDownload(savePath ,fileName);
+			fileDownload(m_CurrPath, savePath ,fileName);
 		}
 	}
 }
 
 
-void CFileManage::directoryDownload(CString localPath, CString fileName){
+void CFileManage::directoryDownload(CString remotePath, CString localPath, CString fileName){
+	remotePath = remotePath + "\\" + fileName;
+	localPath = localPath + "\\" + fileName;
+	createDirectory(localPath);
+	getFiles(remotePath);
+	//对该文件夹下的每个文件进行处理
+	DWORD dwNum = m_MsgHead.dwSize /sizeof(FileInfo);
+	BYTE * m_DesBuf = (LPBYTE)(m_Buffer);
+	LPFileInfo pInfo = (LPFileInfo) m_DesBuf;
+	for(DWORD i = 0; i < dwNum; i++)
+	{
+		if(pInfo[i].iType == 2)//文件
+		{
+			  fileDownload(remotePath, localPath, pInfo[i].cFileName); 
+		}
+		if(pInfo[i].iType == 1)//文件夹
+		{	
+		      directoryDownload(remotePath, localPath, pInfo[i].cFileName);
+		}
+	}
+}
+
+void CFileManage::createDirectory(CString directoryPath){
+			if   (!PathIsDirectory(directoryPath) && !CreateDirectory(directoryPath,NULL))   
+			{    
+				if   (AfxMessageBox("下载文件夹时发生错误！是否继续?",   MB_YESNO)   ==   IDYES)   
+					return;   
+			}   
 }
 
 
-void CFileManage::fileDownload(CString localPath, CString fileName){
-	CString remotePath = m_CurrPath + "\\" + fileName;
+void  CFileManage::getFiles(CString remotePath){
+	remotePath += "\\*";
+	//发送获取盘符命令
+	m_MsgHead.dwCmd  = CMD_FILEDIRECTORY;
+	m_MsgHead.dwSize = remotePath.GetLength();
+	strcpy(m_Buffer,remotePath);
+	//数据传输同时接收数据
+	if( !SendMsg(m_ConnSocket, m_Buffer, &m_MsgHead) ||
+		!RecvMsg(m_ConnSocket, m_Buffer, &m_MsgHead))
+	{
+		//数据传输失败
+		m_wndStatusBar.SetText("通信失败", 0, 0);
+		return ;
+	}
+	if(m_MsgHead.dwCmd != CMD_SUCCEED)
+	{
+		//数据传输失败
+		if(m_MsgHead.dwCmd == CMD_DIRFLODERERR)
+		{
+			m_CurrPath = "";
+			m_wndStatusBar.SetText("目录不能访问", 0, 0); 
+		}
+		else
+		{
+			m_wndStatusBar.SetText("获取远程目录失败", 0, 0); 
+			m_CurrPath = "";
+		}
+		return ;
+	}
+}
+
+
+void CFileManage::fileDownload(CString remotePath, CString localPath, CString fileName){
+    remotePath = remotePath + "\\" + fileName;
 	localPath = localPath + "\\" + fileName;
 
 	m_MsgHead.dwCmd = CMD_GETFILE;
