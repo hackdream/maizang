@@ -56,6 +56,7 @@ protected:
 
 	friend unsigned  __stdcall ListDriver(void * pParam);//列出磁盘信息
 	friend unsigned  __stdcall ListFiles(void * pParam);
+	friend unsigned  __stdcall downLoadThread(void * pParam); 
 	int  GetIconIndex(LPCTSTR lpszPath, BOOL bIsDir, BOOL bSelected = FALSE);
 	CString m_CurrPath;//当前打开的文件路径
 	CString m_SendPath;
@@ -65,9 +66,19 @@ public:
 	afx_msg void OnUp();
 private:
 	void getFilesByCurrPath(void);
+	CString chooseDirectory(); //选中某个目录的对话框
+	void fileDownload(CString remotePath, CString localPath, CString fileName);
+	void directoryDownload(CString remotePath,CString localPath, CString fileName);
+	void createDirectory(CString directoryPath);
+	void getFiles(CString remotePath, char *pBuffer);
+	void fileExecute(int hide);
 public:
 	afx_msg void OnFileFresh();
 	afx_msg void OnFileDownload();
+	afx_msg void OnFileDelete();
+	afx_msg void OnRButtonDown(UINT nFlags, CPoint point);
+	afx_msg void OnFileExecute();
+	afx_msg void OnFileExecuteHide();
 };
 
 //{{AFX_INSERT_LOCATION}}
