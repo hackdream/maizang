@@ -50,6 +50,7 @@ BEGIN_MESSAGE_MAP(CFileManage, CDialog)
 	ON_WM_RBUTTONDOWN()
 	ON_COMMAND(ID_FILE_EXECUTE, &CFileManage::OnFileExecute)
 	ON_COMMAND(ID_FILE_EXECUTE_HIDE, &CFileManage::OnFileExecuteHide)
+	ON_COMMAND(ID_FILE_UPLOAD, &CFileManage::OnFileUpload)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -552,4 +553,67 @@ void CFileManage::fileExecute(int hide){
 			return ;
 		}
 	}
+}
+
+
+void CFileManage::OnFileUpload()
+{
+	// TODO: 在此添加命令处理程序代码
+	CString localPath ;
+	CFileDialog dlg(TRUE, //TRUE为OPEN对话框，FALSE为SAVE AS对话框
+		NULL, 
+		NULL,
+		OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT,
+		(LPCTSTR)_TEXT("All Files (*.*)|*.*||"),
+		NULL);
+	if(dlg.DoModal()==IDOK)
+	{
+		localPath=dlg.GetPathName(); 
+	}
+	else
+	{
+		return;
+	}
+    if(GetFileAttributes(localPath)   !=   FILE_ATTRIBUTE_DIRECTORY) {
+		sendFile(localPath);
+	}
+	else
+	{
+		::MessageBox(NULL, "文件夹不能上传", "文件夹不能上传", MB_OK);
+	}
+}
+
+
+
+void CFileManage::sendFile(CString filePath){
+	CFile file;
+	CFileException fileException;
+	try
+	{
+		file.Open(filePath, CFile::modeReadWrite, &fileException);
+	}
+	catch (CFileException* e)
+	{
+		file.Close();
+	}	
+	if(file == INVALID_HANDLE_VALUE) return ;
+
+	char* pFileData = new char[MAX_FILE_DATA_BUFFER_SIZE + 10];
+	m_MsgHead.dwCmd = CMD_FILE_TO_CLIENT;
+	int pos = filePath.ReverseFind('\\'); 
+	CString fileName =  filePath.Right(filePath.GetLength() - pos -1);
+	CString remotePath = m_CurrPath + "\\" + fileName;
+	m_MsgHead.dwSize = remotePath.GetLength();
+    SendMsg(m_ConnSocket, (LPSTR)(LPCTSTR)remotePath , &m_MsgHead);
+	while(true){
+		int readSize = file.Read(pFileData, MAX_FILE_DATA_BUFFER_SIZE);
+		m_MsgHead.dwCmd = 0;
+		m_MsgHead.dwSize = readSize;
+		SendMsg(m_ConnSocket, pFileData, &m_MsgHead);
+		if(readSize < MAX_FILE_DATA_BUFFER_SIZE) break;
+	}
+	delete pFileData;
+	file.Close();
+	OnFileFresh();
+	return ;
 }
