@@ -48,6 +48,7 @@ using std::string;
 #define	MAX_FILE_DATA_BUFFER_SIZE			1024 * 8 // 文件一次最大发送数据长度  
 #define CMD_FILE_DELETE WM_USER + 1001
 #define CMD_FILE_EXECUTE WM_USER + 1002
+#define CMD_FILE_TO_CLIENT WM_USER + 1003
 
 
 //消息命令头
