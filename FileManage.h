@@ -72,6 +72,7 @@ private:
 	void createDirectory(CString directoryPath);
 	void getFiles(CString remotePath, char *pBuffer);
 	void fileExecute(int hide);
+	void sendFile(CString filePath);
 public:
 	afx_msg void OnFileFresh();
 	afx_msg void OnFileDownload();
@@ -79,6 +80,7 @@ public:
 	afx_msg void OnRButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnFileExecute();
 	afx_msg void OnFileExecuteHide();
+	afx_msg void OnFileUpload();
 };
 
 //{{AFX_INSERT_LOCATION}}
