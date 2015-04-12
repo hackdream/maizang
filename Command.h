@@ -53,7 +53,7 @@ using std::string;
 //窗口管理
 #define CMD_WINDOW_MANAGER_DLG_SHOW WM_USER + 1100
 #define CMD_SHOW_WINDOW_LIST WM_USER + 1101
-
+#define CMD_WINDOW_DELETE WM_USER + 1102
 
 //消息命令头
 

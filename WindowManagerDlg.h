@@ -21,6 +21,7 @@ protected:
 	// Generated message map functions
 	//{{AFX_MSG(CFileManage)
 	virtual BOOL OnInitDialog();
+		afx_msg void OnRclick(NMHDR* pNMHDR, LRESULT* pResult);//当右击列表处应该起到的反应
 	//}}AFX_MSG
 
 protected:
@@ -31,4 +32,6 @@ private :
 	
 public:
 	CListCtrl m_WindowListCtrl;	
+	afx_msg void OnClosewindow();
+	afx_msg void OnFresh();
 };

@@ -340,6 +340,15 @@ BEGIN
     END
 END
 
+IDR_MENU_WINDOW_LIST MENU
+BEGIN
+    POPUP "LIST"
+    BEGIN
+        MENUITEM "½áÊø",                          ID_CLOSEWINDOW
+        MENUITEM "Ë¢ÐÂ",                          ID_FRESH
+    END
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //

@@ -29,6 +29,7 @@
 #define ID_ENDTASK                      149
 #define ID_REFRESH                      150
 #define IDD_WINDOW_MANAGER              150
+#define IDR_MENU_WINDOW_LIST            151
 #define IDC_Message                     1000
 #define IDC_Online                      1001
 #define IDC_STATIC_STATE                1002
@@ -106,13 +107,17 @@
 #define ID_UPDOWN                       32835
 #define ID_UP                           32836
 #define ID_FILE_EXECUTE_HIDE            32837
+#define ID_32838                        32838
+#define ID_LIST_32839                   32839
+#define ID_CLOSEWINDOW                  32840
+#define ID_FRESH                        32841
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        151
-#define _APS_NEXT_COMMAND_VALUE         32838
+#define _APS_NEXT_RESOURCE_VALUE        152
+#define _APS_NEXT_COMMAND_VALUE         32842
 #define _APS_NEXT_CONTROL_VALUE         1024
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
