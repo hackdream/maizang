@@ -1190,5 +1190,6 @@ LRESULT CMaizangDlg::OnWindowManagerDlgShow(WPARAM wParam, LPARAM lParam){
 	pWindowManagerDlg->Create(IDD_WINDOW_MANAGER, GetDesktopWindow());//创建一个非模态对话框
 	pWindowManagerDlg->ShowWindow(SW_SHOW);
 	pWindowManagerDlg->m_MainSocket = pInput->sMainConnect;
+	pWindowManagerDlg->windowListShow();
 	return 0;
 }

@@ -1,4 +1,5 @@
 #pragma once
+#include "afxcmn.h"
 
 
 // CWindowManagerDlg 对话框
@@ -14,10 +15,20 @@ public:
 // 对话框数据
 	enum { IDD = IDD_WINDOW_MANAGER };
 
+   void windowListShow();
+
+protected:
+	// Generated message map functions
+	//{{AFX_MSG(CFileManage)
+	virtual BOOL OnInitDialog();
+	//}}AFX_MSG
+
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 支持
-
+		
 	DECLARE_MESSAGE_MAP()
 private :
 	
+public:
+	CListCtrl m_WindowListCtrl;	
 };
