@@ -20,6 +20,7 @@
 #define  WM_SCREENDLGSHOW WM_USER + 4000
 #define  WM_CMD_DLG_SHOW WM_USER + 912
 #define  WM_PROCESS_SHOW WM_USER + 914
+#define  WM_WINDOW_MANAGER_DLG_SHOW WM_USER + 1150
 typedef struct tagSocketInput
 {
 	SOCKET sMainConnect;
@@ -100,6 +101,7 @@ protected:
 	afx_msg LRESULT OnScreenDlgShow(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnCmdDlgShow(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnProcessShow(WPARAM wParam, LPARAM lParam);
+	afx_msg LRESULT OnWindowManagerDlgShow(WPARAM wParam, LPARAM lParam);
 	DECLARE_MESSAGE_MAP()
 private: 
 
@@ -114,7 +116,7 @@ private:
 
 	////在线检测线程  心跳包
     friend unsigned  __stdcall ThreadCheck(void * pParam);   
-
+	void openDlg(int cmd);
 
     int    Online_computer_count;
 	HANDLE hCheckThread; 

@@ -150,6 +150,14 @@ BEGIN
     PUSHBUTTON      "生成服务端",IDC_GenerateServer,67,111,50,14
 END
 
+IDD_WINDOW_MANAGER DIALOGEX 0, 0, 567, 262
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Dialog"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "",IDC_WINDOW_LIST,"SysListView32",LVS_REPORT | LVS_ALIGNLEFT | WS_BORDER | WS_TABSTOP,7,7,553,248
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -250,6 +258,14 @@ BEGIN
         TOPMARGIN, 7
         BOTTOMMARGIN, 170
     END
+
+    IDD_WINDOW_MANAGER, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 560
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 255
+    END
 END
 #endif    // APSTUDIO_INVOKED
 
@@ -321,6 +337,15 @@ BEGIN
         MENUITEM "下载文件",                        ID_FILE_DOWNLOAD
         MENUITEM "刷新",                          ID_FILE_FRESH
         MENUITEM "向上",                          ID_UP
+    END
+END
+
+IDR_MENU_WINDOW_LIST MENU
+BEGIN
+    POPUP "LIST"
+    BEGIN
+        MENUITEM "结束",                          ID_CLOSEWINDOW
+        MENUITEM "刷新",                          ID_FRESH
     END
 END
 

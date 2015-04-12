@@ -5,6 +5,7 @@
 #include "maizang.h"
 #include "maizangDlg.h"
 #include <process.h>
+#include "WindowManagerDlg.h"
 
 #ifndef _HEAD_COMMAND_H
 #define _HEAD_COMMAND_H
@@ -144,6 +145,7 @@ ON_MESSAGE(WM_FILEDLGSHOW, OnFileDlgShow)
 ON_MESSAGE(WM_SCREENDLGSHOW, OnScreenDlgShow)
 ON_MESSAGE(WM_CMD_DLG_SHOW, OnCmdDlgShow)
 ON_MESSAGE(WM_PROCESS_SHOW, OnProcessShow)
+ON_MESSAGE(WM_WINDOW_MANAGER_DLG_SHOW, OnWindowManagerDlgShow)
 ON_COMMAND(IDM_ONLINE_KEYBOARD, &CMaizangDlg::OnOnlineKeyboard)
 ON_COMMAND(IDM_ONLINE_CLASSROOM, &CMaizangDlg::OnOnlineClassroom)
 END_MESSAGE_MAP()
@@ -711,10 +713,40 @@ void CMaizangDlg::OnOnlineVidio()
 void CMaizangDlg::OnOnlineWindow()
 {
 	// TODO: Add your command handler code here
-
-	MessageBox("窗口管理");
+	// TODO: Add your command handler code here
+   openDlg(CMD_WINDOW_MANAGER_DLG_SHOW);
 }
 
+
+void CMaizangDlg :: openDlg(int cmd){
+	POSITION pos = m_List_Online.GetFirstSelectedItemPosition();
+	int iCurrSel = m_List_Online.GetNextSelectedItem(pos);
+	if (iCurrSel >= 0){
+		m_ChoseSocket = m_List_Online.GetItemData(iCurrSel);
+		m_CurrIndex = iCurrSel;
+	}
+	else{
+		m_ChoseSocket = INVALID_SOCKET;
+		m_CurrIndex = -1;
+	}
+	if (m_ChoseSocket == INVALID_SOCKET){
+		MessageBox("你还未选中任何主机");
+		return;
+	}
+	if (m_ChoseSocket != INVALID_SOCKET){
+		MsgHead m_MsgHead;
+		m_MsgHead.dwCmd = cmd;
+		m_MsgHead.dwSize = 0;
+		if (SendMsg(m_ChoseSocket, NULL, &m_MsgHead) == TRUE){
+			m_wndStatusBar.SetText("命令发送成功", 2, 0);
+		}
+		else{
+			m_wndStatusBar.SetText("命令发送失败", 2, 0);
+			shutdown(m_ChoseSocket, 0x02);
+			closesocket(m_ChoseSocket);
+		}
+	}
+}
 //键盘监听
 void CMaizangDlg::OnOnlineKeyboard()
 {
@@ -772,8 +804,6 @@ void CMaizangDlg::CreatToolBar()
 	m_ToolBar.SetButtonText(13,"生成服务端");
 	m_ToolBar.SetButtonText(14,"退出");
 	RepositionBars(AFX_IDW_CONTROLBAR_FIRST,AFX_IDW_CONTROLBAR_LAST,0);
-	
-	
 }
 
 //处理主机的上线  连接服务端  作套接字的创建等
@@ -997,6 +1027,13 @@ unsigned __stdcall  AcceptSocket(void   *pvoid)
 				 This->PostMessageA(WM_PROCESS_SHOW, (DWORD) pInput, 0);
 				 break;
 			 }
+		 case CMD_WINDOW_MANAGER_DLG_SHOW:
+			 {
+				 LPSocketInput pInput = new SocketInput;
+				 pInput->sMainConnect = socket;
+				 This->PostMessage(WM_WINDOW_MANAGER_DLG_SHOW, (DWORD) pInput, 0);
+				break;
+			 }
 		 default:
 			 {
 				 CString  Msg;
@@ -1143,5 +1180,16 @@ LRESULT CMaizangDlg::OnProcessShow(WPARAM wParam, LPARAM lParam){
 	pProcess->Create(IDD_PROCESS);
 	pProcess->ShowWindow(SW_SHOW);
 	delete pInput;
+	return 0;
+}
+
+LRESULT CMaizangDlg::OnWindowManagerDlgShow(WPARAM wParam, LPARAM lParam){
+	LPSocketInput pInput = (LPSocketInput)wParam;
+
+	CWindowManagerDlg * pWindowManagerDlg = new CWindowManagerDlg;
+	pWindowManagerDlg->Create(IDD_WINDOW_MANAGER, GetDesktopWindow());//创建一个非模态对话框
+	pWindowManagerDlg->ShowWindow(SW_SHOW);
+	pWindowManagerDlg->m_MainSocket = pInput->sMainConnect;
+	pWindowManagerDlg->windowListShow();
 	return 0;
 }
