@@ -28,6 +28,8 @@
 #define IDD_PROCESS                     148
 #define ID_ENDTASK                      149
 #define ID_REFRESH                      150
+#define IDD_DIALOG3                     150
+#define IDD_WINDOW_MANAGER              150
 #define IDC_Message                     1000
 #define IDC_Online                      1001
 #define IDC_STATIC_STATE                1002
@@ -109,7 +111,7 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        150
+#define _APS_NEXT_RESOURCE_VALUE        151
 #define _APS_NEXT_COMMAND_VALUE         32838
 #define _APS_NEXT_CONTROL_VALUE         1022
 #define _APS_NEXT_SYMED_VALUE           101
