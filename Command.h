@@ -100,6 +100,13 @@ typedef struct tagFileInfo
 }FileInfo,*LPFileInfo;
 
 
+typedef struct tagWindowInfo{
+	DWORD dwProcessID;
+	char  strTitle[512];
+}WindowInfo, *LPWindowInfo;
+
+
+
 BOOL RecvData(SOCKET s,char *data,int len);
 BOOL RecvMsg(SOCKET s,char  *pBuf,LPMsgHead lpMsgHead);
 
