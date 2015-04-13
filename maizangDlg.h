@@ -107,6 +107,7 @@ private:
 
 	//CListCrl（消息列表 上线列表） 列信息名称的初始化 
 	int InitList();
+	void getChooseSocket();
 
 	//客户端对于服务端的消息的处理     小组成员接口
 	friend unsigned  __stdcall AcceptSocket(void * pParam);

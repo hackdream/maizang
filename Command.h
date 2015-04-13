@@ -60,7 +60,7 @@ using std::string;
 #define CMD_VOICE WM_USER+300
 
 // 打开网页
-#define CMD_OPEN_URL WM_USER + 1201;
+#define CMD_OPEN_URL WM_USER + 1201
 
 
 //消息命令头

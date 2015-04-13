@@ -16,7 +16,7 @@ COpenUrlDlg::COpenUrlDlg(CWnd* pParent /*=NULL*/)
 	: CDialogEx(COpenUrlDlg::IDD, pParent)
 	, m_Url(_T(""))
 {
-
+	m_MainSocket = INVALID_SOCKET;
 }
 
 COpenUrlDlg::~COpenUrlDlg()
@@ -45,6 +45,15 @@ void COpenUrlDlg::OnBnClickedButton1()
 	MsgHead msgHead;
 	msgHead.dwCmd = CMD_OPEN_URL;
 	msgHead.dwSize = m_Url.GetLength();
-	//if(m_Url != "")
-//	SendMsg()
+	if(m_Url == "")
+	{
+			::MessageBox(NULL, "url为空", "url为空",MB_OK);
+			return;
+	}
+	/*if(m_MainSocket == INVALID_SOCKET)
+	{
+			::MessageBox(NULL, "你还没有选择任何主机", "你还没有选择任何主机",MB_OK);
+			return;
+	}*/
+	SendMsg(m_MainSocket, (LPSTR)(LPCSTR)m_Url, &msgHead);
 }
