@@ -140,6 +140,7 @@
     <ClCompile Include="FileManage.cpp" />
     <ClCompile Include="maizang.cpp" />
     <ClCompile Include="maizangDlg.cpp" />
+    <ClCompile Include="MessageBoxDlg.cpp" />
     <ClCompile Include="OpenUrlDlg.cpp" />
     <ClCompile Include="Process.cpp" />
     <ClCompile Include="ScreenDlg.cpp" />
@@ -168,6 +169,7 @@
     <ClInclude Include="FileManage.h" />
     <ClInclude Include="maizang.h" />
     <ClInclude Include="maizangDlg.h" />
+    <ClInclude Include="MessageBoxDlg.h" />
     <ClInclude Include="OpenUrlDlg.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="SettingDlg.h" />

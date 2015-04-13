@@ -131,6 +131,8 @@ public:
 	afx_msg void OnOnlineKeyboard();
 	afx_msg void OnOnlineClassroom();
 	afx_msg void OnOnlineOpenurl();
+	afx_msg void OnOnlineMessagebox();
+	virtual void OnOK();
 };
 
 //{{AFX_INSERT_LOCATION}}

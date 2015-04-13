@@ -62,6 +62,9 @@ using std::string;
 // 打开网页
 #define CMD_OPEN_URL WM_USER + 1201
 
+//发送弹窗
+#define CMD_MESSAGEBOX + 1301
+
 
 //消息命令头
 

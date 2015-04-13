@@ -8,6 +8,7 @@
 #include "WindowManagerDlg.h"
 #include "VoiceManage.h"
 #include "OpenUrlDlg.h"
+#include "MessageBoxDlg.h"
 
 #ifndef _HEAD_COMMAND_H
 #define _HEAD_COMMAND_H
@@ -151,6 +152,7 @@ ON_MESSAGE(WM_WINDOW_MANAGER_DLG_SHOW, OnWindowManagerDlgShow)
 ON_COMMAND(IDM_ONLINE_KEYBOARD, &CMaizangDlg::OnOnlineKeyboard)
 ON_COMMAND(IDM_ONLINE_CLASSROOM, &CMaizangDlg::OnOnlineClassroom)
 ON_COMMAND(IDM_ONLINE_OPENURL, &CMaizangDlg::OnOnlineOpenurl)
+ON_COMMAND(IDM_ONLINE_MESSAGEBOX, &CMaizangDlg::OnOnlineMessagebox)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -1075,4 +1077,27 @@ void CMaizangDlg::OnOnlineOpenurl()
 	pOpenUrlDlg->ShowWindow(SW_SHOW);
 	
 	pOpenUrlDlg->m_MainSocket = m_ChoseSocket;
+}
+
+
+void CMaizangDlg::OnOnlineMessagebox()
+{
+	// TODO: 在此添加命令处理程序代码
+	getChooseSocket();
+	if(m_ChoseSocket == INVALID_SOCKET) {
+		::MessageBox(NULL, "未选中任何主机", "未选中任何主机", MB_OK);
+		return ;
+	}
+	CMessageBoxDlg *pMessageBoxDlg = new CMessageBoxDlg;
+	pMessageBoxDlg->Create(IDD_MESSAGEBOX, GetDesktopWindow());//创建一个非模态对话框
+	pMessageBoxDlg->ShowWindow(SW_SHOW);
+	pMessageBoxDlg->m_MainSocket = m_ChoseSocket;
+}
+
+
+void CMaizangDlg::OnOK()
+{
+	// TODO: 在此添加专用代码和/或调用基类
+	//注释下面  防止enter键关闭主窗口
+	//CDialog::OnOK();
 }
