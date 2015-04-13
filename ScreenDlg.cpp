@@ -32,7 +32,7 @@ CScreenDlg::~CScreenDlg()
 	MsgHead msgHead;
 	msgHead.dwCmd = 88;
 	SendMsg(m_MainSocket, NULL, &msgHead);
-//	if(m_ChoseSocket != INVALID_SOCKET ) {
+//	if(m_ChoseSocket != INVALID_SOCKET ) {  //此处是整个上线信息所使用的socket 所以不能关闭
 	//	closesocket(m_ChoseSocket);
 	//}
 }

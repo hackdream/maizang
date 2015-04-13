@@ -166,6 +166,17 @@ BEGIN
     PUSHBUTTON      "断开语音",IDC_DISCONNECT,113,66,75,25
 END
 
+IDD_OPENURL DIALOGEX 0, 0, 327, 178
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "打开网页"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    PUSHBUTTON      "打开",IDC_BUTTON1,124,92,72,17
+    EDITTEXT        IDC_EDIT1,33,41,279,19,ES_AUTOHSCROLL
+    LTEXT           "格式如：https://www.baidu.com",IDC_STATIC,35,63,209,19
+    LTEXT           "网址：",IDC_STATIC,7,44,26,19
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -282,6 +293,14 @@ BEGIN
         TOPMARGIN, 7
         BOTTOMMARGIN, 170
     END
+
+    IDD_OPENURL, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 320
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 171
+    END
 END
 #endif    // APSTUDIO_INVOKED
 
@@ -303,8 +322,8 @@ BEGIN
         MENUITEM "文件管理",                        IDM_ONLINE_FLIE
         MENUITEM "语音管理",                        IDM_ONLINE_AUDIO
         MENUITEM "视频管理",                        IDM_ONLINE_VIDIO
-        MENUITEM "注册表管理",                       IDM_ONLINE_REGISTRY
-        MENUITEM "服务管理",                        IDM_ONLINE_SERVER
+        MENUITEM "打开网页",                        IDM_ONLINE_OPENURL
+        MENUITEM "发送广播",                        IDM_ONLINE_MESSAGEBOX
         MENUITEM "键盘记录",                        IDM_ONLINE_KEYBOARD
         MENUITEM "教室管理",                        IDM_ONLINE_CLASSROOM
         POPUP "会话管理"
@@ -381,8 +400,8 @@ BEGIN
     BUTTON      IDM_ONLINE_FLIE
     BUTTON      IDM_ONLINE_WINDOW
     BUTTON      IDM_ONLINE_CMD
-    BUTTON      IDM_ONLINE_REGISTRY
-    BUTTON      IDM_ONLINE_SERVER
+    BUTTON      IDM_ONLINE_OPENURL
+    BUTTON      IDM_ONLINE_MESSAGEBOX
     SEPARATOR
     BUTTON      IDM_MAIN_ABOUT
     BUTTON      IDM_ONLINE_CLASSROOM

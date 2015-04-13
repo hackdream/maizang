@@ -126,10 +126,10 @@ private:
 	SOCKET m_ListenSock;
 	HANDLE hAcceptThread;//接受线程返回值
 	CString strStatusBar;
- 
 public:
 	afx_msg void OnOnlineKeyboard();
 	afx_msg void OnOnlineClassroom();
+	afx_msg void OnOnlineOpenurl();
 };
 
 //{{AFX_INSERT_LOCATION}}

