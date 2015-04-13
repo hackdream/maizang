@@ -55,6 +55,12 @@ using std::string;
 #define CMD_SHOW_WINDOW_LIST WM_USER + 1101
 #define CMD_WINDOW_DELETE WM_USER + 1102
 
+
+//ÓïÒôÃüÁî
+#define CMD_VOICE WM_USER+300
+
+
+
 //ÏûÏ¢ÃüÁîÍ·
 
 struct ProcsInfo{

@@ -30,6 +30,8 @@
 #define ID_REFRESH                      150
 #define IDD_WINDOW_MANAGER              150
 #define IDR_MENU_WINDOW_LIST            151
+#define IDD_DIALOG3                     152
+#define IDD_VOICE                       152
 #define IDC_Message                     1000
 #define IDC_Online                      1001
 #define IDC_STATIC_STATE                1002
@@ -50,6 +52,7 @@
 #define IDC_Ec                          1015
 #define IDC_Execute                     1015
 #define IDC_GenerateServer              1015
+#define IDC_DISCONNECT                  1015
 #define IDC_BUTTON3                     1017
 #define IDC_Shell                       1018
 #define IDC_CommandEdit                 1019
@@ -116,7 +119,7 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        152
+#define _APS_NEXT_RESOURCE_VALUE        153
 #define _APS_NEXT_COMMAND_VALUE         32842
 #define _APS_NEXT_CONTROL_VALUE         1024
 #define _APS_NEXT_SYMED_VALUE           101

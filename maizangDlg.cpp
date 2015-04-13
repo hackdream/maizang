@@ -6,6 +6,7 @@
 #include "maizangDlg.h"
 #include <process.h>
 #include "WindowManagerDlg.h"
+#include "VoiceManage.h"
 
 #ifndef _HEAD_COMMAND_H
 #define _HEAD_COMMAND_H
@@ -502,7 +503,38 @@ void CMaizangDlg::CreatStatusBar()
 void CMaizangDlg::OnOnlineAudio() 
 {
 	// TODO: Add your command handler code here
-	MessageBox("声音");
+	POSITION pos = m_List_Online.GetFirstSelectedItemPosition();
+	int iCurrSel= m_List_Online.GetNextSelectedItem(pos);
+	if(iCurrSel >= 0)
+	{	
+		m_ChoseSocket  = m_List_Online.GetItemData(iCurrSel);
+		m_CurrIndex = iCurrSel;
+	}
+	else
+	{
+
+		m_ChoseSocket = INVALID_SOCKET;
+		m_CurrIndex = -1;
+	}
+	if (m_ChoseSocket ==  INVALID_SOCKET) 
+	{
+		MessageBox("您还未选中任何主机");
+		return;
+	}
+	if(m_ChoseSocket !=  INVALID_SOCKET)
+	{
+		MsgHead m_MsgHead;
+		m_MsgHead.dwCmd = CMD_VOICE;
+		m_MsgHead.dwSize = 0;
+		if (SendMsg(m_ChoseSocket,NULL,&m_MsgHead) == TRUE)
+		{
+			VoiceManage voiceManage;
+			voiceManage.VoiceTransmit();
+			voiceManage.DoModal();
+		}
+	}
+
+	//MessageBox("声音");
 }
 
 //远程终端
