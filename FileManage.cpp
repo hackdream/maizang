@@ -475,6 +475,10 @@ void CFileManage::fileDownload(CString remotePath, CString localPath, CString fi
 	}
 	CFile file(localPath, CFile::modeCreate | CFile::modeWrite);
 	while(RecvMsg(m_ConnSocket, m_Buffer, &m_MsgHead)){
+		if(m_MsgHead.dwCmd == 88)
+		{
+			::MessageBox(NULL, "该文件不存在或者无权限读取", remotePath ,MB_OK);
+		}
 		file.Write(m_Buffer, m_MsgHead.dwSize);
 		if(m_MsgHead.dwSize < MAX_FILE_DATA_BUFFER_SIZE) break;
 	}
@@ -590,7 +594,7 @@ void CFileManage::sendFile(CString filePath){
 	CFileException fileException;
 	try
 	{
-		file.Open(filePath, CFile::modeReadWrite, &fileException);
+		file.Open(filePath, CFile::modeRead, &fileException);
 	}
 	catch (CFileException* e)
 	{

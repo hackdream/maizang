@@ -26,10 +26,15 @@ CScreenDlg::~CScreenDlg()
 	if(pData != NULL) { delete pData; pData = NULL;}
 	if(pChanged != NULL) { delete pChanged; pChanged = NULL;}
     if (m_hWnd != NULL)
-    {
-        
+    { 
         DestroyWindow();
     }
+	MsgHead msgHead;
+	msgHead.dwCmd = 88;
+	SendMsg(m_MainSocket, NULL, &msgHead);
+//	if(m_ChoseSocket != INVALID_SOCKET ) {
+	//	closesocket(m_ChoseSocket);
+	//}
 }
 
 void CScreenDlg::DoDataExchange(CDataExchange* pDX)
