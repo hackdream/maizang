@@ -19,6 +19,7 @@
 #include "CmdDlg.h"
 #include "Process.h"
 #include "SettingDlg.h"
+#include "TeacherDlg.h"
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
@@ -590,6 +591,7 @@ void CMaizangDlg::OnOnlineWindow()
 
 
 void CMaizangDlg :: openDlg(int cmd){
+	getChooseSocket();
 	if (m_ChoseSocket == INVALID_SOCKET){
 		MessageBox("你还未选中任何主机");
 		return;
@@ -619,7 +621,10 @@ void CMaizangDlg::OnOnlineKeyboard()
 void CMaizangDlg::OnOnlineClassroom()
 {
 	// TODO: 在此添加命令处理程序代码
-	MessageBox("教室功能");
+	CTeacherDlg *pTeacherDlg = new CTeacherDlg;
+	pTeacherDlg->pMaizangDlg = this;
+	pTeacherDlg->Create(IDD_TeacherDlg, GetDesktopWindow());//创建一个非模态对话框
+	pTeacherDlg->ShowWindow(SW_SHOW);
 }
 
 
@@ -1089,8 +1094,11 @@ void CMaizangDlg::OnOnlineMessagebox()
 		return ;
 	}
 	CMessageBoxDlg *pMessageBoxDlg = new CMessageBoxDlg;
+		pMessageBoxDlg->pMaizangDlg = this;
 	pMessageBoxDlg->Create(IDD_MESSAGEBOX, GetDesktopWindow());//创建一个非模态对话框
 	pMessageBoxDlg->ShowWindow(SW_SHOW);
+
+	pMessageBoxDlg->setAllSendButton(FALSE);
 	pMessageBoxDlg->m_MainSocket = m_ChoseSocket;
 }
 
@@ -1100,4 +1108,17 @@ void CMaizangDlg::OnOK()
 	// TODO: 在此添加专用代码和/或调用基类
 	//注释下面  防止enter键关闭主窗口
 	//CDialog::OnOK();
+}
+
+
+list<SOCKET>* CMaizangDlg::getAllSocket()
+{
+	list<SOCKET> *pList = new list<SOCKET>;
+	
+	int iCurrSel = 0;
+	while(iCurrSel < Online_computer_count){	
+	        pList->push_back(m_List_Online.GetItemData(iCurrSel));
+			iCurrSel++;
+	}
+	return pList;
 }

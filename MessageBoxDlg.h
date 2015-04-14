@@ -1,6 +1,6 @@
 #pragma once
 #include "afxwin.h"
-
+#include "maizangDlg.h"
 
 // CMessageBoxDlg ¶Ô»°¿ò
 
@@ -24,5 +24,9 @@ public:
 	CString m_content;
 	CString m_category;
 	SOCKET m_MainSocket;
+	CMaizangDlg *pMaizangDlg;
 	afx_msg void OnBnClickedSendmessagebox();
+	afx_msg void OnBnClickedAllSendmessagebox();
+	void setAllSendButton(BOOL b);
+	void setSendButton(BOOL b);
 };

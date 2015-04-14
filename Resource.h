@@ -33,6 +33,7 @@
 #define IDD_VOICE                       152
 #define IDD_OPENURL                     153
 #define IDD_MESSAGEBOX                  154
+#define IDD_TeacherDlg                  155
 #define IDC_Message                     1000
 #define IDC_Online                      1001
 #define IDC_STATIC_STATE                1002
@@ -56,6 +57,7 @@
 #define IDC_Execute                     1015
 #define IDC_GenerateServer              1015
 #define IDC_DISCONNECT                  1015
+#define IDC_ALL_OPENURL                 1016
 #define IDC_BUTTON3                     1017
 #define IDC_Shell                       1018
 #define IDC_CommandEdit                 1019
@@ -64,6 +66,9 @@
 #define IDC_IP                          1021
 #define IDC_WINDOW_LIST                 1023
 #define IDC_SendMessageBox              1024
+#define IDC_ALL_OPEN_MESSAGEDLG         1025
+#define IDC_All_SendMessageBox2         1025
+#define IDC_All_SendMessageBox          1026
 #define IDC_LIST_PROCESS                1027
 #define IDM_ONLINE_CMD                  32771
 #define IDM_ONLINE_PROCESS              32773
@@ -125,9 +130,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        155
+#define _APS_NEXT_RESOURCE_VALUE        156
 #define _APS_NEXT_COMMAND_VALUE         32844
-#define _APS_NEXT_CONTROL_VALUE         1025
+#define _APS_NEXT_CONTROL_VALUE         1027
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

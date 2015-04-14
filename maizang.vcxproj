@@ -151,6 +151,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">stdafx.h</PrecompiledHeaderFile>
     </ClCompile>
+    <ClCompile Include="TeacherDlg.cpp" />
     <ClCompile Include="TrueColorToolBar.cpp" />
     <ClCompile Include="VoiceManage.cpp" />
     <ClCompile Include="WindowManagerDlg.cpp" />
@@ -174,6 +175,7 @@
     <ClInclude Include="Resource.h" />
     <ClInclude Include="SettingDlg.h" />
     <ClInclude Include="StdAfx.h" />
+    <ClInclude Include="TeacherDlg.h" />
     <ClInclude Include="ThreadTemplate.h" />
     <ClInclude Include="TrueColorToolBar.h" />
     <ClInclude Include="VoiceManage.h" />

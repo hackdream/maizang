@@ -13,6 +13,8 @@
  
 #include "AutoLock.h"
 #include "FileManage.h"
+#include <list>
+using namespace std;
 /////////////////////////////////////////////////////////////////////////////
 // CMaizangDlg dialog
 
@@ -133,6 +135,7 @@ public:
 	afx_msg void OnOnlineOpenurl();
 	afx_msg void OnOnlineMessagebox();
 	virtual void OnOK();
+	list<SOCKET>* getAllSocket();
 };
 
 //{{AFX_INSERT_LOCATION}}

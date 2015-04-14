@@ -25,13 +25,14 @@ CScreenDlg::~CScreenDlg()
 {
 	if(pData != NULL) { delete pData; pData = NULL;}
 	if(pChanged != NULL) { delete pChanged; pChanged = NULL;}
-    if (m_hWnd != NULL)
-    { 
-        DestroyWindow();
-    }
 	MsgHead msgHead;
 	msgHead.dwCmd = 88;
 	SendMsg(m_MainSocket, NULL, &msgHead);
+    if (m_hWnd != NULL)
+    { 
+    //    DestroyWindow();
+    }
+
 //	if(m_ChoseSocket != INVALID_SOCKET ) {  //此处是整个上线信息所使用的socket 所以不能关闭
 	//	closesocket(m_ChoseSocket);
 	//}
@@ -140,9 +141,6 @@ void CScreenDlg::OnPaint()
 	rect.top = rect.bottom - 15;
 	rect.right = rect.right - 15;
  	m_HScrollBar.MoveWindow(rect); 
- 
-
-	 
 }
 
 
@@ -174,8 +172,6 @@ BOOL CScreenDlg::OnEraseBkgnd(CDC* pDC)
 	if(restH < 0) restH = 0;
 	int restW = bm.bmWidth - Width;
 	if(restW < 0) restW = 0;
-
-
 
 	//水平滚动条操作
 	SCROLLINFO Hinfo;//配置滑块的一些信息！ 注意是滑块的！ 不是滚动条 是你拖动的那个小快快 
@@ -664,8 +660,10 @@ void CScreenDlg::GetFirstScreen()
 
 		if(!RecvData(m_MainSocket,(char *)pCompress,lenthcompress))
 		{
-				    if(pCompress != NULL )
+				    if(pCompress != NULL ){
 				         delete [] pCompress;
+						 pCompress = NULL;
+					}
 		//	::MessageBox(NULL, "屏幕数据接收，数据接收失败", "出错", MB_OK);
 			closesocket(m_MainSocket);
 			m_MainSocket = INVALID_SOCKET;
@@ -677,7 +675,9 @@ void CScreenDlg::GetFirstScreen()
 			   if(pChanged == NULL || pData == NULL)  // 窗口关闭时，本线程可能仍旧运行一小段时间 故如果pData为NULL 就退出线程 否则弹出错误框
 			   {
 				    if(pCompress != NULL )
-				         delete [] pCompress;
+				    {     delete [] pCompress;
+							pCompress = NULL;
+					}
 					return ;
 			   }
 				   uncompress(pChanged,
