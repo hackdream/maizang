@@ -34,6 +34,7 @@ private:
 	BITMAPFILEHEADER   bmfHdr; 
 	BYTE * pData;// 保存位图的数据
 	BYTE * pChanged;//图像变化的数据
+	BYTE * pCompress;
 	int m_ChangedOff;//提取变化的数据时使用的偏移量
 	int m_DataOff;// 更新保存之前数据buffer时用到偏移量
 	BOOL IsFirst;//判断是不是图像的第一帧
