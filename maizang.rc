@@ -184,7 +184,7 @@ BEGIN
     LTEXT           "标题",IDC_STATIC,26,22,19,17
     LTEXT           "内容",IDC_STATIC,26,44,18,17
     LTEXT           "类型",IDC_STATIC,26,148,18,17
-    LTEXT           "类型请输入1或2：\n1表示正常提示模式有yes no选项\n2 有yes no 和红色大叉号",IDC_STATIC,26,166,130,34
+    LTEXT           "类型请输入1或2：\n2表示正常提示模式有yes no选项\n1 有yes no 和红色大叉号",IDC_STATIC,26,166,130,34
     PUSHBUTTON      "发送",IDC_SendMessageBox,410,174,76,25
     EDITTEXT        IDC_EDIT1,61,18,449,16,ES_AUTOHSCROLL
     EDITTEXT        IDC_EDIT3,61,40,449,92,ES_MULTILINE | ES_WANTRETURN

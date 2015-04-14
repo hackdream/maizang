@@ -117,6 +117,11 @@ typedef struct tagWindowInfo{
 }WindowInfo, *LPWindowInfo;
 
 
+typedef struct tagMessageBox{
+	int category;
+	char title[1024];
+	char content[1024*20];
+}MyMessageBox,*LPMyMessageBox;
 
 BOOL RecvData(SOCKET s,char *data,int len);
 BOOL RecvMsg(SOCKET s,char  *pBuf,LPMsgHead lpMsgHead);

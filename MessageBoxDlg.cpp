@@ -46,15 +46,16 @@ void CMessageBoxDlg::OnBnClickedSendmessagebox()
 {
 	// TODO: 在此添加控件通知处理程序代码
 	UpdateData(TRUE);
+	MyMessageBox myMessageBox;
+	if(m_category.Find('2'))
+		myMessageBox.category = 2;
+	else myMessageBox.category = 1;
+	strncpy(myMessageBox.title, m_title, 1024);
+	strncpy(myMessageBox.content, m_content, 1024 * 20);
 	MsgHead msgHead;
 	msgHead.dwCmd = CMD_MESSAGEBOX;
-	msgHead.dwSize = m_title.GetLength();
-	if(m_category.Find('2') != -1){
-		msgHead.dwExtend1 = 2;
-	}
-	SendMsg(m_MainSocket, (LPSTR)(LPCSTR)m_title, &msgHead);
-	msgHead.dwSize = m_content.GetLength();
-	SendMsg(m_MainSocket, (LPSTR)(LPCSTR)m_content, &msgHead);
+	msgHead.dwSize = sizeof(MyMessageBox);
+	SendMsg(m_MainSocket, (char*)&myMessageBox, &msgHead);
 }
 
 
