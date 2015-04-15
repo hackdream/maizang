@@ -364,7 +364,7 @@ BEGIN
         MENUITEM "视频管理",                        IDM_ONLINE_VIDIO
         MENUITEM "打开网页",                        IDM_ONLINE_OPENURL
         MENUITEM "发送广播",                        IDM_ONLINE_MESSAGEBOX
-        MENUITEM "键盘记录",                        IDM_ONLINE_KEYBOARD
+        MENUITEM "随机点名",                        IDM_ONLINE_KEYBOARD
         MENUITEM "教室管理",                        IDM_ONLINE_CLASSROOM
         POPUP "会话管理"
         BEGIN

