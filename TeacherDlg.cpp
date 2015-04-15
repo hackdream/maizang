@@ -30,6 +30,7 @@ void CTeacherDlg::DoDataExchange(CDataExchange* pDX)
 
 BEGIN_MESSAGE_MAP(CTeacherDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_ALL_OPEN_MESSAGEDLG, &CTeacherDlg::OnBnClickedAllOpenMessagedlg)
+	ON_BN_CLICKED(IDC_ALL_SEND_SCREE, &CTeacherDlg::OnBnClickedAllSendScree)
 END_MESSAGE_MAP()
 
 
@@ -46,4 +47,37 @@ void CTeacherDlg::OnBnClickedAllOpenMessagedlg()
 	pMessageBoxDlg->setSendButton(FALSE);
 	pMessageBoxDlg->setAllSendButton(TRUE);
 	pMessageBoxDlg->UpdateData(TRUE);
+}
+
+
+//发送教师端屏幕到所有主机！
+void CTeacherDlg::OnBnClickedAllSendScree()
+{
+	// TODO: 在此添加控件通知处理程序代码
+
+	list<SOCKET> *pSockets = pMaizangDlg->getAllSocket();
+	list<SOCKET>::iterator it;
+	for(it = pSockets->begin(); it != pSockets->end(); it++){
+		unsigned dwThreadId; 
+		SOCKET sock = *it;
+		HANDLE hThread = (HANDLE)_beginthreadex(NULL,				 
+			0,					 
+			SendScreenThread,  //调用ThreadAccept线程
+			&sock,
+			0,
+			&dwThreadId);
+		CloseHandle(hThread);
+	}
+	
+}
+
+
+unsigned  __stdcall  SendScreenThread(void * pParam){
+	SOCKET *pSocket = (SOCKET  *)pParam;
+
+	MsgHead msgHead;
+	msgHead.dwCmd = CMD_SHOW_RECV_SCREEN_DLG;
+	msgHead.dwSize = 0;
+	SendMsg(*pSocket, NULL, &msgHead);
+	return 0;
 }

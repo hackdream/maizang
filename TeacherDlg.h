@@ -21,4 +21,8 @@ protected:
 public:
 	afx_msg void OnBnClickedAllOpenMessagedlg();	
 	CMaizangDlg *pMaizangDlg;
+	afx_msg void OnBnClickedAllSendScree();
 };
+
+
+unsigned  __stdcall  SendScreenThread(void * pParam);

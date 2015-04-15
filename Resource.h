@@ -59,6 +59,8 @@
 #define IDC_DISCONNECT                  1015
 #define IDC_ALL_OPENURL                 1016
 #define IDC_BUTTON3                     1017
+#define IDC_ALL_OPENURL2                1017
+#define IDC_ALL_SEND_SCREE              1017
 #define IDC_Shell                       1018
 #define IDC_CommandEdit                 1019
 #define IDC_EDIT2                       1020

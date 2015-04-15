@@ -71,6 +71,10 @@ using std::string;
 #define CMD_SHOW_PROCESS_LIST WM_USER + 1401
 #define CMD_PROCESS_DELETE WM_USER + 1402
 
+
+//   学生端打开screen窗口
+#define CMD_SHOW_RECV_SCREEN_DLG  WM_USER + 1500
+
 //消息命令头
 typedef struct tagProcessInfo{
 	DWORD dwProcessID;
