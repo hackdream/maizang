@@ -1,52 +1,36 @@
-
-
-/////////////////////////////////////////////////////////////////////////////
 #pragma once
-#include "afxwin.h"
-#include <tlHelp32.h>
-#include <vdmDbg.h>
-// CProcess dialogz
+#include "afxcmn.h"
 
-//#include <winsock.h>
-#define KEY_SREEN 0x1002
-#define KEY_NO_CTRL 0x1003
-#define KEY_CTRL_C 0x1004
-#define KEY_CTRL_BRAK 0x1005
+// CProcess 对话框
 
-class CProcess :public CDialog{
-	//DECLARE_DYNAMIC(CPrcoess)
+class CProcess : public CDialogEx
+{
+	DECLARE_DYNAMIC(CProcess)
+
 public:
-	CProcess(CWnd *pParent = NULL);
-	//void SetConnSocket(SOCKET socket);
-	enum{IDD=IDD_PROCESS};
-	//CListCtrl m_CtrlProcessPropList;
-	//CListCtrl m_CtrlProcessProp;
-	CListCtrl m_CtrlProcessList;
-	SOCKET m_ConnSocket;
+	CProcess(CWnd* pParent = NULL);   // 标准构造函数
+	virtual ~CProcess();
+	SOCKET m_MainSocket;
+	// 对话框数据
+	enum { IDD = IDD_PROCESS };
+
+	void processListShow();
+
 protected:
-	HICON m_hIcon;
-	//CProcessEnumerator m_ProcessEnumViewer;
-	virtual void DoDataExchange(CDataExchange *pDX);
-	//DECLARE_MESSAGE_MAP()
+	// Generated message map functions
+	//{{AFX_MSG(CFileManage)
 	virtual BOOL OnInitDialog();
-	afx_msg void OnSysCommand(UINT nId, LPARAM lParam);
-	afx_msg void OnPaint();
-	afx_msg void OnRefresh();
-	afx_msg HCURSOR OnQueryDragIcon();
-	afx_msg void OnTimer(UINT nIDEvent);
-	afx_msg void OnItemchangedListProcess(NMHDR *pNMHDR, LRESULT *pResult);
-	afx_msg void OnItemchangedListProperties(NMHDR *pNMHDR, LRESULT *pResult);
-	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
-	afx_msg void OnSize(UINT nType,int cx,int cy);
-	afx_msg void OnEndtask();
+	afx_msg void OnRclick(NMHDR* pNMHDR, LRESULT* pResult);//当右击列表处应该起到的反应
+	//}}AFX_MSG
+
+protected:
+	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 支持
+
 	DECLARE_MESSAGE_MAP()
+private :
 
-	void InitializeViews();
-
-private:
-	BOOL CheckOSVersion(DWORD &OSVersion);
+public:
+	CListCtrl m_ProcessListCtrl;	
+	afx_msg void OnCloseprocess();
+	afx_msg void OnFresh();
 };
-
-unsigned __stdcall RecvProcessDataThread(void *);
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.

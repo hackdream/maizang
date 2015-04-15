@@ -66,13 +66,18 @@ using std::string;
 #define CMD_MESSAGEBOX + 1301
 
 
-//消息命令头
+//进程管理
+#define CMD_PROCESS_MANAGER_DLG_SHOW WM_USER + 1400
+#define CMD_SHOW_PROCESS_LIST WM_USER + 1401
+#define CMD_PROCESS_DELETE WM_USER + 1402
 
-struct ProcsInfo{
-	char szFileName[MAX_PATH];
-	char dwProcessID[15];
-	char szFilePath[MAX_PATH];
-};
+//消息命令头
+typedef struct tagProcessInfo{
+	DWORD dwProcessID;
+	char  strTitle[512];
+	char  strPath[512];
+}ProcessInfo, *LPProcessInfo;
+
 
 typedef struct tagMsgHead
 {

@@ -39,9 +39,6 @@
     <ClCompile Include="ScreenDlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Process.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SettingDlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -61,6 +58,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="TeacherDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Process.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

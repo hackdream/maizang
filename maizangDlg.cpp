@@ -560,7 +560,7 @@ void CMaizangDlg::OnOnlineFlie()
 void CMaizangDlg::OnOnlineProcess()
 {
 	// TODO: Add your command handler code here
-	openDlg(CMD_PROCESS_SHOW);
+	openDlg(CMD_PROCESS_MANAGER_DLG_SHOW);
 }
 
 //注册表管理 
@@ -898,7 +898,7 @@ unsigned __stdcall  AcceptSocket(void   *pvoid)
 				 This->PostMessage(WM_CMD_DLG_SHOW, (DWORD)pInput, 0);//发出一个创建屏幕窗口响应消息 让OnCmdDlgShow进行响应处理	
 				 break;
 			 }
-		 case CMD_PROCESS_SHOW:
+		 case CMD_PROCESS_MANAGER_DLG_SHOW:
 			 {
 				 LPSocketInput pInput = new SocketInput;
 				 pInput->sMainConnect = socket;
@@ -1054,10 +1054,10 @@ CEdit a;
 LRESULT CMaizangDlg::OnProcessShow(WPARAM wParam, LPARAM lParam){
 	LPSocketInput pInput = (LPSocketInput) wParam;
 	CProcess *pProcess = new CProcess;
-	pProcess->m_ConnSocket = pInput->sMainConnect;
-	pProcess->Create(IDD_PROCESS);
-	pProcess->ShowWindow(SW_SHOW);
-	delete pInput;
+	pProcess->Create(IDD_PROCESS, GetDesktopWindow());//创建一个非模态对话框	
+	pProcess->ShowWindow(SW_SHOW);	
+	pProcess->m_MainSocket = pInput->sMainConnect;
+	pProcess->processListShow();
 	return 0;
 }
 
