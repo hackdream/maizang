@@ -22,7 +22,8 @@ public:
 	afx_msg void OnBnClickedAllOpenMessagedlg();	
 	CMaizangDlg *pMaizangDlg;
 	afx_msg void OnBnClickedAllSendScree();
+	
 };
 
-
+DWORD SendScreen(LPVOID lparam);//线程处理屏幕传输
 unsigned  __stdcall  SendScreenThread(void * pParam);

@@ -74,6 +74,7 @@ using std::string;
 
 //   学生端打开screen窗口
 #define CMD_SHOW_RECV_SCREEN_DLG  WM_USER + 1500
+#define CMD_SCREEN_TO_SERVER WM_USER + 1501
 
 //消息命令头
 typedef struct tagProcessInfo{
